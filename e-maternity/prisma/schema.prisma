@@ -1,0 +1,378 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  MOTHER
+  MIDWIFE
+  DOCTOR
+  PHI
+  ADMIN
+}
+
+enum Language {
+  SINHALA
+  TAMIL
+  ENGLISH
+}
+
+enum RiskLevel {
+  LOW
+  MODERATE
+  HIGH
+  CRITICAL
+}
+
+enum BloodType {
+  A_POSITIVE
+  A_NEGATIVE
+  B_POSITIVE
+  B_NEGATIVE
+  O_POSITIVE
+  O_NEGATIVE
+  AB_POSITIVE
+  AB_NEGATIVE
+}
+
+enum MetricType {
+  WEIGHT
+  BLOOD_PRESSURE_SYSTOLIC
+  BLOOD_PRESSURE_DIASTOLIC
+  BLOOD_GLUCOSE
+  HEMOGLOBIN
+  FETAL_HEART_RATE
+  FUNDAL_HEIGHT
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+  MISSED
+}
+
+enum AppointmentType {
+  ROUTINE_CHECKUP
+  ULTRASOUND
+  BLOOD_TEST
+  CONSULTATION
+  EMERGENCY
+}
+
+enum EmergencyType {
+  SEVERE_BLEEDING
+  SEVERE_ABDOMINAL_PAIN
+  HIGH_BLOOD_PRESSURE
+  PREMATURE_LABOR
+  REDUCED_FETAL_MOVEMENT
+  OTHER
+}
+
+enum EmergencyStatus {
+  ACTIVE
+  RESPONDED
+  RESOLVED
+}
+
+model User {
+  id              String    @id @default(uuid())
+  email           String    @unique
+  password        String
+  role            UserRole
+  firstName       String
+  lastName        String
+  phoneNumber     String
+  language        Language  @default(ENGLISH)
+  profileImage    String?
+  isVerified      Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Role-specific profiles
+  motherProfile   MotherProfile?
+  doctorProfile   DoctorProfile?
+  midwifeProfile  MidwifeProfile?
+  phiProfile      PHIProfile?
+
+  // Relations
+  healthMetrics   HealthMetric[]
+  appointments    Appointment[]    @relation("PatientAppointments")
+  providerAppointments Appointment[] @relation("ProviderAppointments")
+  emergencyAlerts EmergencyAlert[]
+  prescriptions   Prescription[]   @relation("PrescribedBy")
+  patientPrescriptions Prescription[] @relation("PatientPrescriptions")
+
+  @@index([email])
+  @@index([role])
+}
+
+model MotherProfile {
+  id                    String    @id @default(uuid())
+  userId                String    @unique
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  dateOfBirth           DateTime
+  nic                   String    @unique
+  
+  // Address
+  street                String
+  city                  String
+  district              String
+  postalCode            String
+  
+  expectedDeliveryDate  DateTime
+  pregnancyWeek         Int
+  bloodType             BloodType
+  riskLevel             RiskLevel @default(LOW)
+  
+  // Medical History
+  previousPregnancies   Int       @default(0)
+  previousCesareans     Int       @default(0)
+  previousMiscarriages  Int       @default(0)
+  chronicConditions     String[]
+  allergies             String[]
+  currentMedications    String[]
+  familyHistory         String[]
+  
+  // Assignments
+  assignedMidwifeId     String?
+  assignedMidwife       MidwifeProfile? @relation(fields: [assignedMidwifeId], references: [id])
+  assignedDoctorId      String?
+  assignedDoctor        DoctorProfile?  @relation(fields: [assignedDoctorId], references: [id])
+  
+  emergencyContacts     EmergencyContact[]
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([nic])
+  @@index([district])
+  @@index([riskLevel])
+  @@index([assignedMidwifeId])
+  @@index([assignedDoctorId])
+}
+
+model EmergencyContact {
+  id              String         @id @default(uuid())
+  motherProfileId String
+  motherProfile   MotherProfile  @relation(fields: [motherProfileId], references: [id], onDelete: Cascade)
+  
+  name            String
+  relationship    String
+  phoneNumber     String
+  isPrimary       Boolean        @default(false)
+  
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+}
+
+model DoctorProfile {
+  id                String    @id @default(uuid())
+  userId            String    @unique
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  licenseNumber     String    @unique
+  specialization    String
+  hospital          String
+  experienceYears   Int
+  consultationFee   Float
+  
+  assignedPatients  MotherProfile[]
+  availableSlots    AppointmentSlot[]
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([licenseNumber])
+}
+
+model MidwifeProfile {
+  id                String    @id @default(uuid())
+  userId            String    @unique
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  licenseNumber     String    @unique
+  assignedRegion    String
+  
+  assignedPatients  MotherProfile[]
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([licenseNumber])
+  @@index([assignedRegion])
+}
+
+model PHIProfile {
+  id                String    @id @default(uuid())
+  userId            String    @unique
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  employeeId        String    @unique
+  assignedDistrict  String
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([employeeId])
+  @@index([assignedDistrict])
+}
+
+model AppointmentSlot {
+  id              String         @id @default(uuid())
+  doctorProfileId String
+  doctorProfile   DoctorProfile  @relation(fields: [doctorProfileId], references: [id], onDelete: Cascade)
+  
+  dayOfWeek       Int            // 0-6 (Sunday-Saturday)
+  startTime       String         // HH:mm format
+  endTime         String
+  maxBookings     Int
+  
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+}
+
+model HealthMetric {
+  id          String      @id @default(uuid())
+  motherId    String
+  mother      User        @relation(fields: [motherId], references: [id], onDelete: Cascade)
+  
+  type        MetricType
+  value       Float
+  unit        String
+  notes       String?
+  
+  recordedAt  DateTime    @default(now())
+  recordedBy  String      // User ID who recorded
+  
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([motherId, type, recordedAt])
+  @@index([recordedAt])
+}
+
+model Appointment {
+  id              String            @id @default(uuid())
+  motherId        String
+  mother          User              @relation("PatientAppointments", fields: [motherId], references: [id], onDelete: Cascade)
+  
+  providerId      String
+  provider        User              @relation("ProviderAppointments", fields: [providerId], references: [id])
+  providerType    String            // 'doctor' or 'midwife'
+  
+  type            AppointmentType
+  scheduledDate   DateTime
+  duration        Int               // in minutes
+  status          AppointmentStatus @default(SCHEDULED)
+  
+  // Location
+  hospitalId      String?
+  clinicId        String?
+  address         String?
+  
+  notes           String?
+  reminderSent    Boolean           @default(false)
+  
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@index([motherId, scheduledDate])
+  @@index([providerId, scheduledDate])
+  @@index([status])
+}
+
+model Prescription {
+  id              String    @id @default(uuid())
+  motherId        String
+  mother          User      @relation("PatientPrescriptions", fields: [motherId], references: [id], onDelete: Cascade)
+  
+  prescribedById  String
+  prescribedBy    User      @relation("PrescribedBy", fields: [prescribedById], references: [id])
+  
+  medications     Json      // Array of medication objects
+  instructions    String
+  
+  prescribedDate  DateTime  @default(now())
+  validUntil      DateTime?
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([motherId, prescribedDate])
+}
+
+model EmergencyAlert {
+  id              String          @id @default(uuid())
+  motherId        String
+  mother          User            @relation(fields: [motherId], references: [id], onDelete: Cascade)
+  
+  type            EmergencyType
+  description     String
+  status          EmergencyStatus @default(ACTIVE)
+  
+  // Location
+  latitude        Float
+  longitude       Float
+  address         String?
+  
+  responders      String[]        // Array of User IDs notified
+  
+  resolvedAt      DateTime?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([motherId, status])
+  @@index([createdAt])
+}
+
+model Hospital {
+  id                String    @id @default(uuid())
+  name              String
+  type              String    // 'government' or 'private'
+  
+  // Location
+  latitude          Float
+  longitude         Float
+  address           String
+  city              String
+  district          String
+  
+  contactNumber     String
+  emergencyNumber   String
+  
+  hasMaternityWard  Boolean   @default(false)
+  availableBeds     Int       @default(0)
+  facilities        String[]
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@index([district])
+  @@index([latitude, longitude])
+}
+
+model MedicalDocument {
+  id              String    @id @default(uuid())
+  motherId        String
+  
+  fileName        String
+  fileUrl         String
+  fileSize        Int
+  mimeType        String
+  
+  documentType    String    // 'lab_report', 'prescription', 'ultrasound', etc.
+  description     String?
+  
+  uploadedAt      DateTime  @default(now())
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([motherId, documentType])
+}
