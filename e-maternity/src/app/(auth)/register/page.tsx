@@ -52,12 +52,30 @@ export default function RegisterPage() {
       const response = await axios.post('/api/auth/register', data);
       
       if (response.data.success) {
-        toast.success('Registration successful! Please verify your account.');
-        router.push(`/verify-otp?email=${encodeURIComponent(data.email)}`);
+        toast.success('Registration successful! You can now log in.');
+        router.push('/login');
       }
     } catch (error: any) {
+      const errorCode = error.response?.data?.error?.code;
       const message = error.response?.data?.error?.message || 'Registration failed';
-      toast.error(message);
+      
+      if (errorCode === 'USER_EXISTS') {
+        toast.error(message, {
+          description: 'This email is already registered.',
+          action: {
+            label: 'Sign In',
+            onClick: () => router.push('/login'),
+          },
+          duration: 5000,
+        });
+      } else if (errorCode === 'NIC_EXISTS') {
+        toast.error(message, {
+          description: 'This NIC is already registered.',
+          duration: 5000,
+        });
+      } else {
+        toast.error(message);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -77,7 +95,7 @@ export default function RegisterPage() {
       <Card className="w-full max-w-2xl">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-4">
-            <Icons.Baby className="w-12 h-12 text-[#E91E63]" />
+            <Icons.Baby className="w-12 h-12 text-[#2196F3]" />
           </div>
           <CardTitle className="text-2xl font-bold">Create Your Account</CardTitle>
           <CardDescription>
@@ -88,7 +106,7 @@ export default function RegisterPage() {
               <div
                 key={s}
                 className={`h-2 w-16 rounded-full ${
-                  s <= step ? 'bg-[#E91E63]' : 'bg-gray-200'
+                  s <= step ? 'bg-[#2196F3]' : 'bg-gray-200'
                 }`}
               />
             ))}
@@ -204,7 +222,7 @@ export default function RegisterPage() {
                   />
                   <Button
                     type="button"
-                    className="w-full bg-[#E91E63] hover:bg-[#C2185B]"
+                    className="w-full bg-[#2196F3] hover:bg-[#1976D2]"
                     onClick={nextStep}
                   >
                     Next Step
@@ -319,7 +337,7 @@ export default function RegisterPage() {
                     </Button>
                     <Button
                       type="button"
-                      className="flex-1 bg-[#E91E63] hover:bg-[#C2185B]"
+                      className="flex-1 bg-[#2196F3] hover:bg-[#1976D2]"
                       onClick={nextStep}
                     >
                       Next Step
@@ -437,7 +455,7 @@ export default function RegisterPage() {
                     </Button>
                     <Button
                       type="submit"
-                      className="flex-1 bg-[#E91E63] hover:bg-[#C2185B]"
+                      className="flex-1 bg-[#2196F3] hover:bg-[#1976D2]"
                       disabled={isLoading}
                     >
                       {isLoading ? (
@@ -458,7 +476,7 @@ export default function RegisterPage() {
         <CardFooter className="justify-center">
           <div className="text-sm text-center text-[#757575]">
             Already have an account?{' '}
-            <Link href="/login" className="text-[#E91E63] hover:underline font-medium">
+            <Link href="/login" className="text-[#2196F3] hover:underline font-medium">
               Sign In
             </Link>
           </div>
@@ -467,3 +485,4 @@ export default function RegisterPage() {
     </div>
   );
 }
+

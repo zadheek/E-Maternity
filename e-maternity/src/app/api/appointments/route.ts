@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
     }
 
     const { searchParams } = new URL(req.url);
-    const motherId = searchParams.get('motherId') || (session.user as any).id;
+    const motherId = searchParams.get('motherId') || session.user.id;
     const status = searchParams.get('status');
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '20');
@@ -97,7 +97,7 @@ export async function POST(req: NextRequest) {
 
     const appointment = await prisma.appointment.create({
       data: {
-        motherId: (session.user as any).id,
+        motherId: session.user.id,
         providerId: validatedData.providerId,
         providerType: validatedData.providerType,
         type: validatedData.type,

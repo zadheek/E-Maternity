@@ -24,7 +24,7 @@ export default function UnauthorizedPage() {
           </p>
           <div className="flex flex-col gap-2">
             <Link href="/dashboard">
-              <Button className="w-full bg-[#E91E63] hover:bg-[#C2185B]">
+              <Button className="w-full bg-[#2196F3] hover:bg-[#1976D2]">
                 Go to Dashboard
               </Button>
             </Link>
@@ -39,3 +39,4 @@ export default function UnauthorizedPage() {
     </div>
   );
 }
+

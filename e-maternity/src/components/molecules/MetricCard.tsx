@@ -43,7 +43,7 @@ export function MetricCard({
     <Card>
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <div className="flex items-center gap-2">
-          <Icon className="w-5 h-5 text-[#E91E63]" />
+          <Icon className="w-5 h-5 text-[#2196F3]" />
           <h3 className="text-sm font-medium text-[#757575]">{title}</h3>
         </div>
         {status !== 'normal' && (
@@ -81,3 +81,4 @@ export function MetricCard({
     </Card>
   );
 }
+

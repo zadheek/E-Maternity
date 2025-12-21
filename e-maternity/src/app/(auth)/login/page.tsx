@@ -52,14 +52,26 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-pink-50 to-white p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1 text-center">
-          <div className="flex justify-center mb-4">
-            <Icons.Baby className="w-12 h-12 text-[#E91E63]" />
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FCE4EC] via-white to-[#E0F7FA] p-4 relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#2196F3] rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#00BCD4] rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob animation-delay-2000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-[#0288D1] rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob animation-delay-4000"></div>
+      </div>
+
+      <Card className="w-full max-w-md shadow-2xl border-0 relative z-10 backdrop-blur-sm bg-white/95">
+        <CardHeader className="space-y-1 text-center pb-8">
+          <div className="flex justify-center mb-6">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#2196F3] to-[#0288D1] rounded-full blur-lg opacity-30 animate-pulse"></div>
+              <div className="relative bg-gradient-to-br from-[#2196F3] to-[#0288D1] p-4 rounded-full">
+                <Icons.Heart className="h-10 w-10 text-white" />
+              </div>
+            </div>
           </div>
-          <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-[#2196F3] to-[#0288D1] bg-clip-text text-transparent">Welcome Back</CardTitle>
+          <CardDescription className="text-base text-gray-600">
             Sign in to your E-Maternity account
           </CardDescription>
         </CardHeader>
@@ -71,14 +83,18 @@ export default function LoginPage() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel className="text-sm font-semibold text-gray-700">Email Address</FormLabel>
                     <FormControl>
-                      <Input
-                        type="email"
-                        placeholder="your@email.com"
-                        {...field}
-                        disabled={isLoading}
-                      />
+                      <div className="relative">
+                        <Icons.Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                        <Input
+                          type="email"
+                          placeholder="your@email.com"
+                          {...field}
+                          disabled={isLoading}
+                          className="pl-10 h-12 border-gray-300 focus:border-[#2196F3] focus:ring-[#2196F3] transition-all"
+                        />
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -89,14 +105,18 @@ export default function LoginPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel className="text-sm font-semibold text-gray-700">Password</FormLabel>
                     <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="••••••••"
-                        {...field}
-                        disabled={isLoading}
-                      />
+                      <div className="relative">
+                        <Icons.Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                        <Input
+                          type="password"
+                          placeholder="••••••••"
+                          {...field}
+                          disabled={isLoading}
+                          className="pl-10 h-12 border-gray-300 focus:border-[#2196F3] focus:ring-[#2196F3] transition-all"
+                        />
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -105,23 +125,26 @@ export default function LoginPage() {
               <div className="flex justify-end">
                 <Link
                   href="/forgot-password"
-                  className="text-sm text-[#E91E63] hover:underline"
+                  className="text-sm text-[#2196F3] hover:underline"
                 >
                   Forgot password?
                 </Link>
               </div>
               <Button
                 type="submit"
-                className="w-full bg-[#E91E63] hover:bg-[#C2185B]"
+                className="w-full h-12 bg-gradient-to-r from-[#2196F3] to-[#0288D1] hover:from-[#1976D2] hover:to-[#0277BD] text-white font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
                 disabled={isLoading}
               >
                 {isLoading ? (
                   <>
-                    <Icons.Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Icons.Loader2 className="mr-2 h-5 w-5 animate-spin" />
                     Signing in...
                   </>
                 ) : (
-                  'Sign In'
+                  <>
+                    <Icons.LogOut className="mr-2 h-5 w-5 rotate-180" />
+                    Sign In
+                  </>
                 )}
               </Button>
             </form>
@@ -130,7 +153,7 @@ export default function LoginPage() {
         <CardFooter className="flex flex-col space-y-2">
           <div className="text-sm text-center text-[#757575]">
             Don't have an account?{' '}
-            <Link href="/register" className="text-[#E91E63] hover:underline font-medium">
+            <Link href="/register" className="text-[#2196F3] hover:underline font-medium">
               Register as Mother
             </Link>
           </div>
@@ -145,3 +168,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

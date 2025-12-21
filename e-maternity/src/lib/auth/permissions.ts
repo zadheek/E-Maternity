@@ -11,7 +11,6 @@ export const ROLE_PERMISSIONS = {
     'telemedicine:access',
     'risk:mark',
   ],
-  PHI: ['read:statistics', 'read:anonymized', 'reports:generate'],
   ADMIN: ['*'],
 };
 
@@ -28,7 +27,6 @@ export function canAccessRoute(userRole: UserRole, route: string): boolean {
     '/dashboard/mother': ['MOTHER', 'ADMIN'],
     '/dashboard/midwife': ['MIDWIFE', 'ADMIN'],
     '/dashboard/doctor': ['DOCTOR', 'ADMIN'],
-    '/dashboard/phi': ['PHI', 'ADMIN'],
     '/dashboard/admin': ['ADMIN'],
   };
 

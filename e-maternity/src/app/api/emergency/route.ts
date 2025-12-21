@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
 
     // Get mother's profile with assigned providers
     const motherProfile = await prisma.motherProfile.findUnique({
-      where: { userId: (session.user as any).id },
+      where: { userId: session.user.id },
       include: {
         assignedDoctor: { include: { user: true } },
         assignedMidwife: { include: { user: true } },
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
 
     const alert = await prisma.emergencyAlert.create({
       data: {
-        motherId: (session.user as any).id,
+        motherId: session.user.id,
         type: validatedData.type,
         description: validatedData.description,
         latitude: validatedData.latitude,
@@ -122,7 +122,7 @@ export async function GET(req: NextRequest) {
 
     const alerts = await prisma.emergencyAlert.findMany({
       where: {
-        motherId: (session.user as any).id,
+        motherId: session.user.id,
       },
       orderBy: { createdAt: 'desc' },
       take: 10,

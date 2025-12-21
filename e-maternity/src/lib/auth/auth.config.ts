@@ -26,7 +26,6 @@ export const authOptions: NextAuthOptions = {
             motherProfile: true,
             doctorProfile: true,
             midwifeProfile: true,
-            phiProfile: true,
           },
         });
 
@@ -34,9 +33,10 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Invalid email or password');
         }
 
-        if (!user.isVerified) {
-          throw new Error('Please verify your email before logging in');
-        }
+        // Email verification disabled for now
+        // if (!user.isVerified) {
+        //   throw new Error('Please verify your email before logging in');
+        // }
 
         const isPasswordValid = await bcrypt.compare(
           credentials.password,

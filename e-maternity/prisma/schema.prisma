@@ -11,7 +11,6 @@ enum UserRole {
   MOTHER
   MIDWIFE
   DOCTOR
-  PHI
   ADMIN
 }
 
@@ -98,7 +97,6 @@ model User {
   motherProfile   MotherProfile?
   doctorProfile   DoctorProfile?
   midwifeProfile  MidwifeProfile?
-  phiProfile      PHIProfile?
 
   // Relations
   healthMetrics   HealthMetric[]
@@ -126,6 +124,7 @@ model MotherProfile {
   district              String
   postalCode            String
   
+  pregnancyStartDate    DateTime?
   expectedDeliveryDate  DateTime
   pregnancyWeek         Int
   bloodType             BloodType
@@ -135,6 +134,7 @@ model MotherProfile {
   previousPregnancies   Int       @default(0)
   previousCesareans     Int       @default(0)
   previousMiscarriages  Int       @default(0)
+  previousSurgeries     String[]  @default([])
   chronicConditions     String[]
   allergies             String[]
   currentMedications    String[]
@@ -147,6 +147,11 @@ model MotherProfile {
   assignedDoctor        DoctorProfile?  @relation(fields: [assignedDoctorId], references: [id])
   
   emergencyContacts     EmergencyContact[]
+  fetalGrowthRecords    FetalGrowthRecord[]
+  ultrasoundRecords     UltrasoundRecord[]
+  homeVisits            HomeVisit[]
+  progressNotes         ProgressNote[]
+  referrals             Referral[]
   
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
@@ -185,6 +190,7 @@ model DoctorProfile {
   
   assignedPatients  MotherProfile[]
   availableSlots    AppointmentSlot[]
+  referrals         Referral[]
   
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
@@ -201,6 +207,9 @@ model MidwifeProfile {
   assignedRegion    String
   
   assignedPatients  MotherProfile[]
+  homeVisits        HomeVisit[]
+  progressNotes     ProgressNote[]
+  referrals         Referral[]
   
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
@@ -209,20 +218,7 @@ model MidwifeProfile {
   @@index([assignedRegion])
 }
 
-model PHIProfile {
-  id                String    @id @default(uuid())
-  userId            String    @unique
-  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  employeeId        String    @unique
-  assignedDistrict  String
-  
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
 
-  @@index([employeeId])
-  @@index([assignedDistrict])
-}
 
 model AppointmentSlot {
   id              String         @id @default(uuid())
@@ -375,4 +371,100 @@ model MedicalDocument {
   updatedAt       DateTime  @updatedAt
 
   @@index([motherId, documentType])
+}
+
+model FetalGrowthRecord {
+  id                      String         @id @default(uuid())
+  motherProfileId         String
+  motherProfile           MotherProfile  @relation(fields: [motherProfileId], references: [id], onDelete: Cascade)
+  
+  week                    Int
+  weight                  Float          // in grams
+  length                  Float          // in cm
+  headCircumference       Float          // in cm
+  abdominalCircumference  Float          // in cm
+  notes                   String?
+  
+  recordedBy              String         // User ID who recorded
+  recordedAt              DateTime       @default(now())
+  createdAt               DateTime       @default(now())
+  updatedAt               DateTime       @updatedAt
+
+  @@index([motherProfileId, week])
+}
+
+model UltrasoundRecord {
+  id              String         @id @default(uuid())
+  motherProfileId String
+  motherProfile   MotherProfile  @relation(fields: [motherProfileId], references: [id], onDelete: Cascade)
+  
+  week            Int
+  type            String         // 'Dating Scan', 'Anomaly Scan', 'Growth Scan', etc.
+  findings        String
+  imageUrl        String?
+  performedBy     String
+  
+  recordedAt      DateTime       @default(now())
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([motherProfileId, week])
+}
+
+model HomeVisit {
+  id                String          @id @default(uuid())
+  motherProfileId   String
+  midwifeProfileId  String
+  motherProfile     MotherProfile   @relation(fields: [motherProfileId], references: [id], onDelete: Cascade)
+  midwifeProfile    MidwifeProfile  @relation(fields: [midwifeProfileId], references: [id], onDelete: Cascade)
+  
+  visitDate         DateTime
+  visitType         String          // 'ROUTINE', 'FOLLOW_UP', 'EMERGENCY', 'EDUCATION'
+  status            String          // 'SCHEDULED', 'COMPLETED', 'CANCELLED'
+  notes             String?
+  observations      Json?           // Store vital signs and other observations
+  
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@index([motherProfileId, visitDate])
+  @@index([midwifeProfileId, visitDate])
+}
+
+model ProgressNote {
+  id                String          @id @default(uuid())
+  motherProfileId   String
+  midwifeProfileId  String
+  motherProfile     MotherProfile   @relation(fields: [motherProfileId], references: [id], onDelete: Cascade)
+  midwife           MidwifeProfile  @relation(fields: [midwifeProfileId], references: [id], onDelete: Cascade)
+  
+  note              String
+  category          String          // 'GENERAL', 'CONCERN', 'IMPROVEMENT', 'EDUCATION'
+  
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@index([motherProfileId, createdAt])
+}
+
+model Referral {
+  id                String          @id @default(uuid())
+  motherProfileId   String
+  midwifeProfileId  String
+  doctorProfileId   String
+  motherProfile     MotherProfile   @relation(fields: [motherProfileId], references: [id], onDelete: Cascade)
+  midwife           MidwifeProfile  @relation(fields: [midwifeProfileId], references: [id], onDelete: Cascade)
+  doctor            DoctorProfile   @relation(fields: [doctorProfileId], references: [id], onDelete: Cascade)
+  
+  reason            String
+  priority          String          // 'ROUTINE', 'URGENT', 'EMERGENCY'
+  status            String          // 'PENDING', 'ACCEPTED', 'COMPLETED', 'REJECTED'
+  notes             String?
+  
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@index([motherProfileId, status])
+  @@index([doctorProfileId, status])
+  @@index([midwifeProfileId, createdAt])
 }

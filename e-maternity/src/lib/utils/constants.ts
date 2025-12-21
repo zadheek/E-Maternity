@@ -4,9 +4,9 @@ export const APP_VERSION = '1.0.0';
 export const APP_DESCRIPTION = 'Smart Maternal Health Management System';
 
 export const COLORS = {
-  primary: '#E91E63',
+  primary: '#2196F3',
   secondary: '#00BCD4',
-  accent: '#FF9800',
+  accent: '#0288D1',
   success: '#4CAF50',
   warning: '#FFC107',
   error: '#F44336',
@@ -99,3 +99,4 @@ export const HEALTH_METRIC_RANGES = {
   FETAL_HEART_RATE: { min: 110, max: 180, normal: { min: 120, max: 160 } },
   FUNDAL_HEIGHT: { min: 10, max: 45 },
 };
+

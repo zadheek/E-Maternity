@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
         lastName: validatedData.lastName,
         phoneNumber: validatedData.phoneNumber,
         language: validatedData.language,
-        isVerified: false,
+        isVerified: true, // Auto-verify for now (OTP feature disabled)
         motherProfile: {
           create: {
             dateOfBirth: new Date(validatedData.dateOfBirth),

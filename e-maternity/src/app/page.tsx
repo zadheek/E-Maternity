@@ -10,7 +10,7 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-16 text-center">
         <div className="flex justify-center mb-6">
-          <Icons.Baby className="w-16 h-16 text-[#E91E63]" />
+          <Icons.Baby className="w-16 h-16 text-[#2196F3]" />
         </div>
         <h1 className="text-5xl font-bold text-[#212121] mb-4">
           E-Maternity
@@ -25,7 +25,7 @@ export default function HomePage() {
         </p>
         <div className="flex gap-4 justify-center">
           <Link href="/register">
-            <Button size="lg" className="bg-[#E91E63] hover:bg-[#C2185B]">
+            <Button size="lg" className="bg-[#2196F3] hover:bg-[#1976D2]">
               Register as Mother
             </Button>
           </Link>
@@ -45,7 +45,7 @@ export default function HomePage() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           <Card>
             <CardHeader>
-              <Icons.Activity className="w-10 h-10 text-[#E91E63] mb-2" />
+              <Icons.Activity className="w-10 h-10 text-[#2196F3] mb-2" />
               <CardTitle>Health Tracking</CardTitle>
               <CardDescription>
                 Monitor weight, blood pressure, glucose, and fetal health metrics
@@ -93,7 +93,7 @@ export default function HomePage() {
         <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           <Card>
             <CardHeader>
-              <Icons.User className="w-10 h-10 text-[#E91E63] mb-2" />
+              <Icons.User className="w-10 h-10 text-[#2196F3] mb-2" />
               <CardTitle>For Mothers</CardTitle>
             </CardHeader>
             <CardContent>
@@ -123,7 +123,7 @@ export default function HomePage() {
 
           <Card>
             <CardHeader>
-              <Icons.BarChart className="w-10 h-10 text-[#FF9800] mb-2" />
+              <Icons.BarChart className="w-10 h-10 text-[#0288D1] mb-2" />
               <CardTitle>For Public Health Officials</CardTitle>
             </CardHeader>
             <CardContent>
@@ -146,4 +146,5 @@ export default function HomePage() {
     </div>
   );
 }
+
 

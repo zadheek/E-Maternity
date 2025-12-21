@@ -22,7 +22,7 @@ export function Logo({ size = 'md', showText = true }: LogoProps) {
 
   return (
     <Link href="/" className="flex items-center gap-2">
-      <Icons.Baby className={`${sizeClasses[size]} text-[#E91E63]`} />
+      <Icons.Baby className={`${sizeClasses[size]} text-[#2196F3]`} />
       {showText && (
         <span className={`${textSizeClasses[size]} font-bold text-[#212121]`}>
           E-Maternity
@@ -31,3 +31,4 @@ export function Logo({ size = 'md', showText = true }: LogoProps) {
     </Link>
   );
 }
+

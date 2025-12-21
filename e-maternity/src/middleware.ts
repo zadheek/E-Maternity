@@ -2,32 +2,19 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-// Define protected routes and their allowed roles
-const roleBasedRoutes = {
-  '/dashboard/mother': ['MOTHER'],
-  '/dashboard/doctor': ['DOCTOR'],
-  '/dashboard/midwife': ['MIDWIFE'],
-  '/dashboard/phi': ['PHI'],
-  '/dashboard/admin': ['ADMIN'],
-};
-
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Allow public routes
+  // Skip middleware for static files and API routes
   if (
     pathname.startsWith('/_next') ||
-    pathname.startsWith('/api/auth') ||
-    pathname.startsWith('/login') ||
-    pathname.startsWith('/register') ||
-    pathname.startsWith('/verify-otp') ||
-    pathname.startsWith('/forgot-password') ||
-    pathname === '/'
+    pathname.startsWith('/api') ||
+    pathname.includes('.')
   ) {
     return NextResponse.next();
   }
 
-  // Check authentication
+  // Check authentication for protected routes
   const token = request.cookies.get('next-auth.session-token');
   
   if (!token && pathname.startsWith('/dashboard')) {

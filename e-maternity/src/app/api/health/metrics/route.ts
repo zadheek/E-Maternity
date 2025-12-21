@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
     }
 
     const { searchParams } = new URL(req.url);
-    const motherId = searchParams.get('motherId') || (session.user as any).id;
+    const motherId = searchParams.get('motherId') || session.user.id;
     const type = searchParams.get('type');
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '20');
@@ -86,7 +86,7 @@ export async function POST(req: NextRequest) {
 
     const metric = await prisma.healthMetric.create({
       data: {
-        motherId: (session.user as any).id,
+        motherId: session.user.id,
         type: validatedData.type,
         value: validatedData.value,
         unit: validatedData.unit,
@@ -94,7 +94,7 @@ export async function POST(req: NextRequest) {
         recordedAt: validatedData.recordedAt
           ? new Date(validatedData.recordedAt)
           : new Date(),
-        recordedBy: (session.user as any).id,
+        recordedBy: session.user.id,
       },
     });
 

@@ -17,6 +17,7 @@ import {
   Baby,
   User,
   Users,
+  UserPlus,
   Settings,
   LogOut,
   Menu,
@@ -25,6 +26,7 @@ import {
   ChevronLeft,
   ChevronDown,
   ChevronUp,
+  ArrowLeft,
   Search,
   Filter,
   Download,
@@ -53,6 +55,13 @@ import {
   ExternalLink,
   RefreshCw,
   Loader2,
+  Globe,
+  Lock,
+  MoreHorizontal,
+  MoreVertical,
+  Printer,
+  XCircle,
+  Thermometer,
 } from 'lucide-react';
 
 export const Icons = {
@@ -79,6 +88,7 @@ export const Icons = {
   LogOut,
   User,
   Users,
+  UserPlus,
 
   // Status & Indicators
   AlertCircle,
@@ -105,18 +115,24 @@ export const Icons = {
   Share2,
   ExternalLink,
   RefreshCw,
+  MoreHorizontal,
+  MoreVertical,
 
   // Navigation
   ChevronRight,
   ChevronLeft,
   ChevronDown,
   ChevronUp,
+  ArrowLeft,
 
   // Content
   FileText,
   Clipboard,
   MessageSquare,
   Mail,
+  Printer,
+  XCircle,
+  Thermometer,
 
   // Charts & Analytics
   BarChart,
@@ -124,6 +140,12 @@ export const Icons = {
 
   // Loading
   Loader2,
+  
+  // Internationalization
+  Globe,
+
+  // Security
+  Lock,
 };
 
 export type IconName = keyof typeof Icons;

@@ -38,10 +38,11 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Icons.Loader2 className="w-8 h-8 animate-spin text-[#E91E63]" />
+        <Icons.Loader2 className="w-8 h-8 animate-spin text-[#2196F3]" />
       </div>
     );
   }
 
   return null;
 }
+
