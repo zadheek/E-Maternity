@@ -1,465 +1,69 @@
-# E-Maternity - Smart Maternal Health Management System
+# E-Maternity - Maternal Health Management System
 
-<div align="center">
+A digital health platform for prenatal and postnatal care management in Sri Lanka.
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
-![Next.js](https://img.shields.io/badge/Next.js-16.1.0-black)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)
-![Prisma](https://img.shields.io/badge/Prisma-7.2.0-2D3748)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
+## Overview
 
-**[SECURE]** HIPAA-Compliant | **[HEALTHCARE]** Healthcare-Grade Security | **[GLOBAL]** Multi-Language Support | **[MOBILE]** Mobile-First Design
+E-Maternity is a web-based system that connects expectant mothers with healthcare providers for continuous monitoring and care coordination.
 
-[Features](#key-features) • [Quick Start](#quick-start) • [Documentation](#documentation) • [Architecture](#architecture--technology-stack)
-
-</div>
-
----
-
-## Project Overview
-
-The **E-Maternity Smart Maternal Health Management System** is a comprehensive **HIPAA-compliant** digital health platform designed for Sri Lanka's maternal healthcare ecosystem. It addresses critical gaps in prenatal and postnatal care by providing continuous health monitoring, emergency response coordination, and data-driven insights for expectant mothers, healthcare providers, and public health officials.
-
-**Last Updated**: December 24, 2025  
-**Build Status**: [PASSING] Docker build successful  
+**Status**: Production Ready  
 **Database**: PostgreSQL with Prisma ORM  
-**Authentication**: NextAuth.js with dual login (Email + NIC)
-
-### Why E-Maternity?
-
-- **[ALERT] Emergency Response**: GPS-enabled SOS alerts with automatic hospital locator
-- **[CHART] Real-time Monitoring**: Track vital health metrics throughout pregnancy
-- **[VIDEO] Telemedicine Ready**: Video consultations with healthcare providers
-- **[LANG] Multi-Language**: Full support for Sinhala, Tamil, and English
-- **[DEVICE] Mobile-First**: Responsive design works on all devices
-- **[LOCK] Secure**: HIPAA-compliant with end-to-end encryption
-- **[NEW] NIC-Based Login**: Mothers can login using National ID without email
-- **[NEW] Vitamin & Immunization Tracking**: Complete vaccination and supplement management
-- **[NEW] Automated Risk Assessment**: Real-time risk calculation based on health metrics
+**Authentication**: Email + NIC-based login
 
 ## Key Features
 
-### For Mothers (Expectant & Postnatal)
-
-<details>
-<summary><b>[DASHBOARD] Personal Dashboard</b> - Comprehensive pregnancy tracking</summary>
-
-- **Pregnancy Progress Tracker**: Real-time week-by-week progress visualization
-- **Countdown to Due Date**: Dynamic countdown with milestone celebrations
-- **Quick Health Overview**: At-a-glance view of latest vitals
-- **Upcoming Appointments**: Never miss a checkup with smart reminders
-- **Risk Level Indicator**: Clear visual alerts for high-risk conditions
-- **Medication Reminders**: Timely notifications for prescribed medications
-- **[NEW] Vitamin Tracking**: View received vitamins and upcoming supplements
-- **[NEW] Immunization Records**: Complete vaccination history with tetanus tracking
-
-</details>
-
-<details>
-<summary><b>[CHART] Health Metrics Tracking</b> - Monitor vital signs</summary>
-
-Track 7 essential health metrics:
-- **[HEART] Blood Pressure** (Systolic & Diastolic)
-- **[SCALE] Weight Monitoring** (Auto risk detection for weight < 45kg)
-- **[DROP] Blood Glucose Levels**
-- **[DNA] Hemoglobin Levels**
-- **[BABY] Fetal Heart Rate**
-- **[RULER] Fundal Height**
-- **[PLUS] Custom Metrics**
-
-Features:
-- Historical trend visualization with charts
-- **[AUTO] Automatic risk detection and alerts** - Triggers high-risk status for low weight
-- Easy data entry with validation
-- Export data for external providers
-- Share with assigned healthcare team
-
-</details>
-
-<details>
-<summary><b>[CALENDAR] Appointment Management</b> - Schedule & track visits</summary>
-
-- Schedule appointments with doctors and midwives
-- View availability in real-time
-- Automated reminders (24h & 1h before)
-- Appointment history with notes
-- Telemedicine video consultation integration
-- Reschedule or cancel with ease
-
-</details>
-
-<details>
-<summary><b>[SOS] Emergency SOS System</b> - Life-saving features</summary>
-
-- **One-tap Emergency Alert**: Instantly notify assigned providers
-- **GPS Location Sharing**: Automatic location transmission
-- **Nearby Hospital Finder**: Shows closest facilities with directions
-- **Emergency Contact Notification**: Alerts family members automatically
-- **Priority Response**: High-priority alerts for providers
-- **24/7 Availability**: Always accessible, no login required
-
-</details>
-
-<details>
-<summary><b>[PILL] Prescription Management</b> - Digital medication tracking</summary>
-
-- View current prescriptions
-- Medication reminders with push notifications
-- Drug interaction warnings
-- Dosage instructions
-- Refill reminders
-- Prescription history
-
-</details>
-
-<details>
-<summary><b>[BOOK] Educational Resources</b> - Learn about pregnancy</summary>
-
-- Trimester-specific content
-- Nutrition guidelines
-- Exercise recommendations
-- Symptom checker
-- FAQ section
-- Multi-language support (Sinhala, Tamil, English)
-
-</details>
-
-<details>
-<summary><b>[ID] NIC-Based Login</b> - Access without email</summary>
-
-- **Login using National ID Card (NIC) number**
-- No email required for mothers
-- Secure authentication with password
-- Automatic profile linking
-- Ideal for users without email access
-- OTP verification via SMS
-
-</details>
-
-### For Healthcare Providers (Doctors & Midwives)
-
-<details>
-<summary><b>[USERS] Patient Management</b> - Comprehensive care coordination</summary>
-
-**Patient Dashboard**:
-- Complete patient profiles with medical history
-- Risk assessment and alerts
-- **[NEW] Universal Access**: All doctors can view any patient (shift-based workflows)
-- **[NEW] NIC-based Patient Search**: Find patients by National ID number
-- Quick search and filters
-
-**Patient Details**:
-- Full health metrics history with charts
-- Appointment timeline
-- Prescription history
-- Lab results and reports
-- Emergency alerts history
-- Medical documents upload/view
-- **[NEW] Vitamin Management**: Prescribe and track vitamins (Folic Acid, Iron, Calcium, Vitamin D, etc.)
-- **[NEW] Immunization Records**: Record tetanus, rubella, hepatitis B, and other vaccinations
-- **[NEW] Abnormal Baby History**: Track and document abnormal pregnancy outcomes
-
-</details>
-
-<details>
-<summary><b>[PILL] Prescription System</b> - Digital prescribing</summary>
-
-- Create digital prescriptions
-- Drug database integration
-- Dosage calculator
-- Automatic drug interaction checks
-- E-signature support
-- Send directly to patients
-- Prescription templates for common conditions
-- **[NEW] Vitamin Prescription**: 8 vitamin types with dosage tracking
-
-</details>
-
-<details>
-<summary><b>[CALENDAR] Appointment Scheduling</b> - Manage your calendar</summary>
-
-- Set availability slots
-- Accept/decline appointment requests
-- View daily/weekly/monthly schedule
-- Patient appointment history
-- Automated reminders
-- Telemedicine session links
-
-</details>
-
-<details>
-<summary><b>[WARNING] High-Risk Alerts</b> - Proactive monitoring</summary>
-
-- **[AUTO] Automatic risk detection** from health metrics
-- Real-time notifications
-- Risk level classification (Low, Moderate, High, Critical)
-- **[NEW] Weight-based risk assessment** (triggers at < 45kg)
-- **[NEW] Abnormal baby history risk factor**
-- Alert history tracking
-- Quick response actions
-
-</details>
-
-<details>
-<summary><b>[VIDEO] Telemedicine</b> - Virtual consultations</summary>
-
-- Secure video consultations
-- Screen sharing for reviewing results
-- Chat functionality
-- Session recording (with consent)
-- Digital prescription issuance
-- Follow-up scheduling
-
-</details>
-
-<details>
-<summary><b>[CHART] Analytics Dashboard</b> - Data-driven insights</summary>
-
-- Patient statistics
-- Appointment trends
-- Health outcome metrics
-- Performance indicators
-- Custom report generation
-
-</details>
-
-### For Public Health Officials (PHI)
-
-<details>
-<summary><b>[TRENDING] Real-time Statistics</b> - Population health monitoring</summary>
-
-- Maternal health trends (aggregated, de-identified)
-- Geographic heat maps
-- Risk distribution by district
-- Appointment completion rates
-- Emergency response times
-- Custom date range analysis
-- **[NEW] Immunization coverage tracking**
-- **[NEW] Vitamin distribution statistics**
-
-</details>
-
-<details>
-<summary><b>[MAP] Geographic Insights</b> - Regional analysis</summary>
-
-- District-wise maternal health statistics
-- Hospital capacity monitoring
-- Provider distribution
-- High-risk area identification
-- Resource allocation recommendations
-
-</details>
-
-<details>
-<summary><b>[CHART] Analytics & Reports</b> - Policy planning data</summary>
-
-- Monthly/quarterly/annual reports
-- Trend analysis with forecasting
-- Export data for presentations
-- Custom metric tracking
-- Outcome measurement
-
-</details>
-
-<details>
-<summary><b>[LOCK] Privacy-Preserving Analytics</b> - Ethical data usage</summary>
-
-- All data aggregated and de-identified
-- No patient-identifiable information exposed
-- HIPAA-compliant reporting
-- Audit trail for data access
-- Export controls with permissions
-
-</details>
-
-### For System Administrators
-
-<details>
-<summary><b>[USERS] User Management</b> - Complete control</summary>
-
-- Create/edit/delete user accounts
-- Role assignment (Mother, Doctor, Midwife, PHI, Admin)
-- Account activation/deactivation
-- Password resets
-- Audit user activity
-- **[NEW] NIC-based account creation**
-
-</details>
-
-<details>
-<summary><b>[HOSPITAL] Hospital Management</b> - Facility database</summary>
-
-- Add/edit hospital information
-- Manage facility capabilities
-- Bed capacity tracking
-- Emergency services status
-- Geographic coverage areas
-
-</details>
-
-<details>
-<summary><b>[SETTINGS] System Settings</b> - Configuration</summary>
-
-- Notification settings (Email, SMS, Push)
-- Security configuration
-- Risk threshold customization
-- Appointment slot management
-- Backup and maintenance
-
-</details>
-
-<details>
-<summary><b>[ALERT] Emergency Management</b> - Crisis response</summary>
-
-- View active emergencies
-- Monitor response times
-- Dispatch coordination
-- Emergency statistics
-- Critical alert management
-
-</details>
-
-<details>
-<summary><b>[CHART] System Analytics</b> - Platform insights</summary>
-
-- User activity statistics
-- System performance metrics
-- API usage tracking
-- Error monitoring
-- Security audit logs
-
-</details>
-
-</details>
-
-## Architecture & Technology Stack
-
-### Frontend
-```
-Next.js 16.1.0 (React 19.2.3)
-├── TypeScript 5.x (Strict mode)
-├── Tailwind CSS 4.x (Utility-first styling)
-├── shadcn/ui (Radix UI components)
-├── Lucide React (Icon system)
-├── React Hook Form (Form management)
-├── Zod 4.2.1 (Schema validation)
-├── Recharts (Data visualization)
-└── Sonner (Toast notifications)
-```
-
-### Backend
-```
-Next.js API Routes
-├── NextAuth.js 4.24.13 (Authentication - Dual Provider)
-│   ├── Email/Password Login
-│   └── NIC-based Login (NEW)
-├── Prisma ORM 7.2.0 (Database toolkit)
-├── PostgreSQL 16 (Primary database)
-├── Socket.io 4.8.1 (Real-time communication)
-└── Axios (HTTP client)
-```
-
-### Security & Compliance
-```
-[LOCK] Security Stack
-├── AES-256-GCM (Encryption at rest)
-├── TLS 1.2+ (HTTPS only)
-├── bcrypt (Password hashing - 12 rounds)
-├── JWT (Session management)
-├── Rate Limiting (Brute force protection)
-├── DOMPurify (Input sanitization)
-├── CSP Headers (XSS protection)
-└── Audit Logging (HIPAA compliance)
-```
-
-### Infrastructure
-```
-Docker & Docker Compose
-├── Multi-stage builds (Development & Production)
-├── PostgreSQL 16 container
-├── Hot reload (Development)
-├── Nginx (Reverse proxy - Production)
-└── PM2-ready (Process management)
-
-[BUILD] Build Status: PASSING
-[TIME] Build Time: ~90 seconds
-[SIZE] Image Size: Optimized multi-stage
-```
-
-### Development Tools
-```
-Development Stack
-├── ESLint 9 (Code linting)
-├── Prettier (Code formatting)
-├── TypeScript Compiler (Type checking)
-├── Prisma Studio (Database GUI)
-└── Git (Version control)
-```
+### For Mothers
+- Health metrics tracking (blood pressure, weight, glucose, hemoglobin, fetal heart rate)
+- Appointment scheduling with reminders
+- Emergency SOS with GPS location
+- NIC-based login (no email required)
+- Vitamin and immunization tracking
+- Automated risk assessment
+- Multi-language support (English, Sinhala, Tamil)
+
+### For Administrators
+- User management
+- Hospital database
+- System monitoring
+- Analytics dashboard
+
+## Technology Stack
+
+- **Frontend**: Next.js 16.1.0, React 19.2.3, TypeScript, Tailwind CSS, shadcn/ui
+- **Backend**: Next.js API Routes, Prisma ORM 7.2.0
+- **Database**: PostgreSQL 16
+- **Authentication**: NextAuth.js 4.24.13
+- **Real-time**: Socket.io
+- **Deployment**: Docker & Docker Compose
 
 ## Project Structure
 
 ```
-e-maternity/
-├── [MOBILE] src/
-│   ├── app/                          # Next.js App Router
-│   │   ├── (auth)/                   # Authentication routes
-│   │   │   ├── login/                # Email login page
-│   │   │   ├── nic-login/            # [NEW] NIC-based login
-│   │   │   ├── register/             # 3-step registration
-│   │   │   └── verify-otp/           # OTP verification
-│   │   │
-│   │   ├── (dashboard)/              # Protected dashboard routes
-│   │   │   └── dashboard/
-│   │   │       ├── mother/           # Mother portal (8 pages)
-│   │   │       │   ├── page.tsx                    # Main dashboard
-│   │   │       │   ├── health-metrics/             # Vital signs tracking
-│   │   │       │   ├── appointments/               # Appointment management
-│   │   │       │   ├── emergency/                  # SOS system
-│   │   │       │   ├── pregnancy-tracking/         # Pregnancy progress
-│   │   │       │   └── profile/                    # Profile management
-│   │   │       │
-│   │   │       ├── doctor/           # Doctor portal (7 pages)
-│   │   │       │   ├── page.tsx                    # Doctor dashboard
-│   │   │       │   ├── patients/                   # Patient list & details
-│   │   │       │   ├── patients/[id]/              # Patient detail view
-│   │   │       │   ├── appointments/               # Appointment calendar
-│   │   │       │   ├── prescriptions/              # Prescription management
-│   │   │       │   ├── analytics/                  # Performance analytics
-│   │   │       │   └── profile/                    # Doctor profile
-│   │   │       │
-│   │   │       ├── midwife/          # Midwife portal (4 pages)
-│   │   │       │   ├── page.tsx                    # Midwife dashboard
-│   │   │       │   ├── patients/[id]/              # Patient monitoring
-│   │   │       │   └── profile/                    # Midwife profile
-│   │   │       │
-│   │   │       ├── admin/            # Admin portal (6 pages)
-│   │   │       │   ├── page.tsx                    # Admin dashboard
-│   │   │       │   ├── doctors/                    # Doctor management
-│   │   │       │   ├── midwives/                   # Midwife management
-│   │   │       │   ├── mothers/                    # Mother monitoring
-│   │   │       │   ├── hospitals/                  # Hospital database
-│   │   │       │   ├── analytics/                  # System analytics
-│   │   │       │   ├── emergencies/                # Emergency monitoring
-│   │   │       │   └── settings/                   # System settings
-│   │   │       │
-│   │   │       └── page.tsx          # Role-based redirect
-│   │   │
-│   │   ├── api/                      # API Routes
-│   │   │   ├── auth/                 # Authentication endpoints
-│   │   │   │   ├── register/         # User registration
-│   │   │   │   ├── verify-otp/       # OTP verification
-│   │   │   │   └── [...nextauth]/    # NextAuth handlers
-│   │   │   │
-│   │   │   ├── health/               # Health metrics API
-│   │   │   │   └── metrics/          # CRUD operations
-│   │   │   │
-│   │   │   ├── vitamins/             # [NEW] Vitamin tracking API
-│   │   │   │   ├── route.ts          # List & create
-│   │   │   │   └── [id]/             # Update & delete
-│   │   │   │
-│   │   │   ├── immunizations/        # [NEW] Immunization records API
-│   │   │   │   └── route.ts          # CRUD operations
-│   │   │   │
+src/
+├── app/
+│   ├── (auth)/                 # Login, registration, NIC login
+│   ├── (dashboard)/            # Mother, doctor, midwife, admin dashboards
+│   └── api/                    # API endpoints
+│
+├── components/
+│   ├── ui/                     # shadcn/ui base components
+│   ├── health/                 # Health tracking components
+│   ├── vitamins/               # Vitamin management
+│   ├── immunizations/          # Immunization tracking
+│   └── emergency/              # SOS system
+│
+├── lib/
+│   ├── auth/                   # Authentication utilities
+│   ├── db/                     # Database configuration
+│   ├── validation/             # Zod schemas
+│   └── risk-assessment/        # Risk calculation
+│
+└── types/                      # TypeScript definitions
+
+prisma/
+├── schema.prisma               # Database schema (18 models)
+└── migrations/                 # Migration history
+```
 │   │   │   ├── appointments/         # Appointment API
 │   │   │   │   ├── route.ts          # List & create
 │   │   │   │   ├── [id]/             # Update & delete
@@ -951,106 +555,75 @@ Open your browser and navigate to `http://localhost:3000`
 
 If you prefer a fully containerized development environment:
 
+## Quick Start
+
+### Prerequisites
+- Node.js 20.18.3+
+- PostgreSQL 16+
+- Docker (optional)
+
+### Installation
+
+1. **Clone and Install**
 ```powershell
-# Start all services (PostgreSQL + Next.js with hot reload)
+git clone <repository-url>
+cd e-maternity
+npm install
+```
+
+2. **Setup Environment**
+Create `.env` file:
+```env
+DATABASE_URL="postgresql://user:password@localhost:5432/e_maternity"
+NEXTAUTH_SECRET="your-secret-key-here"
+NEXTAUTH_URL="http://localhost:3000"
+JWT_SECRET="another-secret-key-here"
+```
+
+3. **Initialize Database**
+```powershell
+npx prisma generate
+npx prisma migrate dev
+npx prisma db seed
+```
+
+4. **Start Development Server**
+```powershell
+npm run dev
+```
+Open http://localhost:3000
+
+### Test Accounts
+
+**Mother (NIC Login)**
+- NIC: `199012345678`
+- Password: `Mother@123`
+
+**Doctor**
+- Email: `doctor1@ematernity.lk`
+- Password: `Doctor@123`
+
+**Midwife**
+- Email: `midwife1@ematernity.lk`
+- Password: `Midwife@123`
+
+**Admin**
+- Email: `admin@ematernity.lk`
+- Password: `Admin@123`
+
+## Docker Deployment
+
+**Development**
+```powershell
 docker compose -f docker-compose.dev.yml up
-
-# Or with build
-docker compose -f docker-compose.dev.yml up --build
-
-# View logs
-docker compose -f docker-compose.dev.yml logs -f
-
-# Stop services
-docker compose -f docker-compose.dev.yml down
 ```
 
-This will:
-- Start PostgreSQL 16 container
-- Start Next.js development server in container
-- Enable hot reload (file changes reflect immediately)
-- Expose ports: 3000 (app), 5432 (database)
-
-### [CHECK] Verify Installation
-
-1. **Check Database Connection:**
-   ```powershell
-   npx prisma studio
-   ```
-   Opens Prisma Studio to browse your database.
-
-2. **Run Type Check:**
-   ```powershell
-   npm run type-check
-   ```
-   [BUILD] Build Status: PASSING (TypeScript compilation successful)
-
-3. **Run Linter:**
-   ```powershell
-   npm run lint
-   ```
-   May show some warnings (mostly style preferences).
-
-4. **Test Authentication:**
-   - Navigate to http://localhost:3000/login
-   - [NEW] Test NIC login: NIC `199012345678`, Password `Mother@123`
-   - Or test email login with test accounts
-   - You should see the dashboard
-
-### [SCRIPTS] Available Scripts
-
-| Script | Description |
-|--------|-------------|
-| `npm run dev` | Start development server with hot reload |
-| `npm run build` | Build production-ready application ([TIME] ~90s) |
-| `npm start` | Start production server (after build) |
-| `npm run lint` | Run ESLint code analysis |
-| `npm run lint:fix` | Auto-fix linting issues |
-| `npm run type-check` | Run TypeScript type checking |
-| `npm run format` | Format code with Prettier |
-| `npm run format:check` | Check code formatting |
-| **[DATABASE] Prisma Commands** | |
-| `npx prisma generate` | Generate Prisma Client |
-| `npx prisma migrate dev` | Run database migrations |
-| `npx prisma db push` | Push schema changes to DB |
-| `npx prisma studio` | Open Prisma Studio GUI |
-| `npx prisma db seed` | Seed database with initial data |
-| `npx prisma migrate reset` | Reset database (WARNING: deletes all data) |
-| **[DOCKER] Docker Commands** | |
-| `docker compose up -d` | Start Docker containers (detached) |
-| `docker compose down` | Stop Docker containers |
-| `docker compose logs -f` | View container logs (follow) |
-| `docker compose build` | Rebuild Docker images |
-| `docker compose down -v` | Remove containers and volumes |
-| **[DEPLOY] Production Commands** | |
-| `docker compose -f docker-compose.yml up -d` | Start production containers |
-| `docker compose -f docker-compose.yml build` | Build production images |
-| `docker compose -f docker-compose.yml down` | Stop production containers |
-| `node scripts/validate-production.js` | Validate production config |
-| `node scripts/generate-secrets.js` | Generate secure secrets |
-
-### [DEBUG] Troubleshooting
-
-<details>
-<summary><b>Port 3000 already in use</b></summary>
-
+**Production**
 ```powershell
-# Find process using port 3000 (Windows)
-netstat -ano | findstr :3000
-
-# Kill the process (replace PID with actual process ID)
-taskkill /PID <PID> /F
-
-# Or change port
-$env:PORT=3001; npm run dev
+docker compose up -d
 ```
 
-</details>
-
-<details>
-<summary><b>Database connection error</b></summary>
-
-1. Verify PostgreSQL is running:
+Build time: ~90 seconds
    ```powershell
    docker ps  # If using Docker
    # Or check Windows services for PostgreSQL
@@ -1984,104 +1557,40 @@ Brief description of changes
 - Follow-up reviews within 1 business day
 - Urgent fixes reviewed within 24 hours
 
----
+## Security & Compliance
 
-## [LICENSE] License
+**Security Features**:
+- AES-256-GCM encryption
+- HTTPS/TLS 1.2+
+- bcrypt password hashing
+- JWT session management
+- Rate limiting
+- Input sanitization
+- Audit logging
 
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+**HIPAA Compliance**: Technical safeguards implemented. Administrative and physical safeguards must be configured by your organization before production use.
 
-```
-MIT License
+## Documentation
 
-Copyright (c) 2025 E-Maternity Contributors
+- [Deployment Guide](docs/DEPLOYMENT.md)
+- [Security Documentation](docs/SECURITY.md)
+- [HIPAA Compliance](docs/HIPAA-COMPLIANCE.md)
+- [Production Readiness](docs/PRODUCTION-READINESS.md)
+- [December 2025 Updates](docs/DECEMBER-2025-ENHANCEMENTS.md)
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+## License
 
-[Full license text in LICENSE file]
-```
+MIT License - see [LICENSE](LICENSE) file for details.
 
----
+## Support
 
-## ⚖️ Legal & Compliance
-
-### HIPAA Notice
-
-This system is **designed to be HIPAA-compliant**, but achieving full HIPAA compliance requires additional steps beyond the technical implementation:
-
-**Required Actions**:
-1. ✅ Assign a Security Officer
-2. ✅ Assign a Privacy Officer
-3. ✅ Execute Business Associate Agreements (BAAs) with all vendors
-4. ✅ Implement workforce training program
-5. ✅ Conduct annual risk assessments
-6. ✅ Establish incident response procedures
-7. ✅ Document all policies and procedures
-8. ✅ Perform regular security audits
-
-**Disclaimer**: 
-> This software provides technical safeguards required by HIPAA, but **administrative and physical safeguards must be implemented by your organization**. Consult with qualified HIPAA attorneys and compliance consultants before deploying in a production healthcare environment.
-
-### Medical Disclaimer
-
-> This system is intended to support healthcare delivery but does not replace professional medical judgment. Healthcare providers must use their clinical expertise when making decisions based on data from this system. In case of medical emergencies, always call local emergency services immediately.
-
-### Privacy Policy
-
-Users must accept the Privacy Policy during registration, which covers:
-- Data collection and usage
-- PHI protection measures
-- User rights (access, rectification, deletion)
-- Third-party data sharing (limited to BAA-covered vendors)
-- Cookie usage
-- Contact information for privacy concerns
-
-Full privacy policy: [PRIVACY-POLICY.md](docs/PRIVACY-POLICY.md)
-
-### Terms of Service
-
-Terms of service cover:
-- Acceptable use policy
-- User responsibilities
-- System availability
-- Liability limitations
-- Dispute resolution
-- Governing law
-
-Full terms: [TERMS-OF-SERVICE.md](docs/TERMS-OF-SERVICE.md)
+- **Issues**: [GitHub Issues](https://github.com/your-username/e-maternity/issues)
+- **Email**: support@ematernity.lk
+- **Emergency**: emergency@ematernity.lk
 
 ---
 
-## 🙏 Acknowledgments
-
-### Organizations
-
-- **Ministry of Health, Sri Lanka** - Healthcare guidelines and support
-- **Sri Lanka Medical Association** - Medical expertise and validation
-- **Maternal and Child Health Program** - Domain knowledge and feedback
-
-### Healthcare Professionals
-
-- Dr. [Name], Consultant Obstetrician - Medical advisor
-- Midwife [Name], Chief Midwife - Workflow consultant
-- Dr. [Name], Public Health Official - Population health insights
-
-### Technical Contributors
-
-- Open source community for excellent libraries
-- OWASP for security best practices
-- HHS Office for Civil Rights - HIPAA guidance
-- Contributors and testers
-
-### Technologies & Libraries
-
-- [Next.js](https://nextjs.org/) - React framework
-- [Prisma](https://www.prisma.io/) - Database ORM
-- [NextAuth.js](https://next-auth.js.org/) - Authentication
+Made for maternal health in Sri Lanka
 - [Tailwind CSS](https://tailwindcss.com/) - Styling
 - [shadcn/ui](https://ui.shadcn.com/) - UI components
 - [Lucide](https://lucide.dev/) - Icon system
