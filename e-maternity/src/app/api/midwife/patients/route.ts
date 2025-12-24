@@ -51,7 +51,7 @@ export async function GET(req: Request) {
     };
 
     if (riskFilter) {
-      whereClause.riskLevel = riskFilter;
+      whereClause.riskLevel = riskFilter as any;
     }
 
     // Get assigned patients

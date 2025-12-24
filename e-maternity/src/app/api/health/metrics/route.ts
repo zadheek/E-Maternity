@@ -5,6 +5,7 @@ import { authOptions } from '@/lib/auth/auth.config';
 import { prisma } from '@/lib/db/prisma';
 import { healthMetricSchema } from '@/lib/validation/health.schema';
 import type { ApiResponse, PaginationInfo } from '@/types';
+import { calculateRiskLevel, isUnderweight } from '@/lib/risk-assessment/calculator';
 
 export async function GET(req: NextRequest) {
   try {
@@ -97,6 +98,94 @@ export async function POST(req: NextRequest) {
         recordedBy: session.user.id,
       },
     });
+
+    // Auto-trigger risk assessment if weight metric is recorded
+    if (validatedData.type === 'WEIGHT') {
+      try {
+        // Get mother profile
+        const motherProfile = await prisma.motherProfile.findFirst({
+          where: { userId: session.user.id },
+        });
+
+        if (motherProfile) {
+          // Update current weight
+          const updateData: any = {
+            currentWeight: validatedData.value,
+          };
+
+          // Check if weight is low (< 45kg = underweight concern)
+          if (validatedData.value < 45) {
+            updateData.isUnderweight = true;
+          } else {
+            updateData.isUnderweight = false;
+          }
+
+          // Calculate BMI if height is available
+          if (motherProfile.height) {
+            const heightInMeters = motherProfile.height / 100;
+            const bmi = validatedData.value / (heightInMeters * heightInMeters);
+            updateData.bmi = bmi;
+            updateData.isUnderweight = bmi < 18.5;
+          }
+
+          await prisma.motherProfile.update({
+            where: { id: motherProfile.id },
+            data: updateData,
+          });
+
+          // Recalculate full risk assessment
+          const age = new Date().getFullYear() - new Date(motherProfile.dateOfBirth).getFullYear();
+
+          // Get latest health metrics for comprehensive risk assessment
+          const [latestBPSystolic, latestBPDiastolic, latestHemoglobin, latestGlucose] = await Promise.all([
+            prisma.healthMetric.findFirst({
+              where: { motherId: session.user.id, type: 'BLOOD_PRESSURE_SYSTOLIC' },
+              orderBy: { recordedAt: 'desc' },
+            }),
+            prisma.healthMetric.findFirst({
+              where: { motherId: session.user.id, type: 'BLOOD_PRESSURE_DIASTOLIC' },
+              orderBy: { recordedAt: 'desc' },
+            }),
+            prisma.healthMetric.findFirst({
+              where: { motherId: session.user.id, type: 'HEMOGLOBIN' },
+              orderBy: { recordedAt: 'desc' },
+            }),
+            prisma.healthMetric.findFirst({
+              where: { motherId: session.user.id, type: 'BLOOD_GLUCOSE' },
+              orderBy: { recordedAt: 'desc' },
+            }),
+          ]);
+
+          const riskFactors = {
+            isUnderweight: updateData.isUnderweight,
+            hasChronicConditions: motherProfile.chronicConditions.length > 0,
+            hadAbnormalBabies: motherProfile.hadAbnormalBabies,
+            age,
+            previousCesareans: motherProfile.previousCesareans,
+            previousMiscarriages: motherProfile.previousMiscarriages,
+            bloodPressure:
+              latestBPSystolic && latestBPDiastolic
+                ? {
+                    systolic: latestBPSystolic.value,
+                    diastolic: latestBPDiastolic.value,
+                  }
+                : undefined,
+            hemoglobin: latestHemoglobin?.value,
+            bloodGlucose: latestGlucose?.value,
+          };
+
+          const newRiskLevel = calculateRiskLevel(riskFactors);
+
+          await prisma.motherProfile.update({
+            where: { id: motherProfile.id },
+            data: { riskLevel: newRiskLevel },
+          });
+        }
+      } catch (riskError) {
+        console.error('Risk assessment error:', riskError);
+        // Don't fail the request if risk assessment fails
+      }
+    }
 
     return NextResponse.json<ApiResponse<typeof metric>>(
       {

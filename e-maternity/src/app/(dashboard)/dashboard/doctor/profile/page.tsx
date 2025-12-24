@@ -31,7 +31,7 @@ interface DoctorProfile {
 }
 
 export default function DoctorProfilePage() {
-  const { user } = useAuth('DOCTOR');
+  useAuth('DOCTOR');
   const router = useRouter();
   const [profile, setProfile] = useState<DoctorProfile | null>(null);
   const [isEditing, setIsEditing] = useState(false);

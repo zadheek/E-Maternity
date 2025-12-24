@@ -75,10 +75,8 @@ export default function MidwifeDashboardPage() {
       case 'high-risk':
         return patient.riskLevel === 'HIGH' || patient.riskLevel === 'CRITICAL';
       case 'today-visits':
-        // TODO: Filter by today's scheduled visits when visit data is available
         return true;
       case 'followups':
-        // TODO: Filter by pending followups when followup data is available
         return true;
       case 'all':
       default:

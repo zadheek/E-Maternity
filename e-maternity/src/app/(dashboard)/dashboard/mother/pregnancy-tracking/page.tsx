@@ -14,6 +14,8 @@ import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
+import { useTranslations } from 'next-intl';
 import {
   Dialog,
   DialogContent,
@@ -53,6 +55,7 @@ interface UltrasoundRecord {
 export default function PregnancyTrackingPage() {
   const { user } = useAuth('MOTHER');
   const router = useRouter();
+  const t = useTranslations();
   const [profile, setProfile] = useState<PregnancyProfile | null>(null);
   const [fetalRecords, setFetalRecords] = useState<FetalGrowthRecord[]>([]);
   const [ultrasounds, setUltrasounds] = useState<UltrasoundRecord[]>([]);
@@ -85,17 +88,11 @@ export default function PregnancyTrackingPage() {
 
   const fetchData = async () => {
     try {
-      console.log('Fetching profile...');
       const profileRes = await axios.get('/api/profile/mother/full');
-      console.log('Profile fetched successfully');
       
-      console.log('Fetching fetal growth records...');
       const fetalRes = await axios.get('/api/pregnancy/fetal-growth');
-      console.log('Fetal records fetched successfully');
       
-      console.log('Fetching ultrasound records...');
       const ultrasoundRes = await axios.get('/api/pregnancy/ultrasounds');
-      console.log('Ultrasound records fetched successfully');
 
       setProfile({
         pregnancyWeek: profileRes.data.data.pregnancyWeek,
@@ -105,9 +102,9 @@ export default function PregnancyTrackingPage() {
       setFetalRecords(fetalRes.data.data || []);
       setUltrasounds(ultrasoundRes.data.data || []);
     } catch (error: any) {
-      console.error('Failed to fetch data:', error);
-      console.error('Error response:', error.response?.data);
-      console.error('Error status:', error.response?.status);
+      
+      
+      
       toast.error(error.response?.data?.error?.message || 'Failed to load pregnancy tracking data');
     } finally {
       setLoading(false);
@@ -118,7 +115,7 @@ export default function PregnancyTrackingPage() {
     setSaving(true);
     try {
       await axios.post('/api/pregnancy/fetal-growth', newFetalRecord);
-      toast.success('Fetal growth record added successfully');
+      toast.success(t('pregnancyTrackingPage.recordAdded'));
       setShowFetalDialog(false);
       setNewFetalRecord({
         week: 0,
@@ -130,7 +127,7 @@ export default function PregnancyTrackingPage() {
       });
       fetchData();
     } catch (error) {
-      console.error('Failed to save record:', error);
+      
       toast.error('Failed to save fetal growth record');
     } finally {
       setSaving(false);
@@ -141,7 +138,7 @@ export default function PregnancyTrackingPage() {
     setSaving(true);
     try {
       await axios.post('/api/pregnancy/ultrasounds', newUltrasound);
-      toast.success('Ultrasound record added successfully');
+      toast.success(t('pregnancyTrackingPage.recordAdded'));
       setShowUltrasoundDialog(false);
       setNewUltrasound({
         week: 0,
@@ -151,7 +148,7 @@ export default function PregnancyTrackingPage() {
       });
       fetchData();
     } catch (error) {
-      console.error('Failed to save record:', error);
+      
       toast.error('Failed to save ultrasound record');
     } finally {
       setSaving(false);
@@ -249,13 +246,14 @@ export default function PregnancyTrackingPage() {
                 onClick={() => router.push('/dashboard/mother')}
               >
                 <Icons.ChevronLeft className="w-5 h-5 mr-1" />
-                Back
+                {t('common.back')}
               </Button>
               <div>
-                <h1 className="text-2xl font-bold text-[#212121]">Pregnancy Tracking</h1>
-                <p className="text-sm text-[#757575]">Monitor your pregnancy journey week by week</p>
+                <h1 className="text-2xl font-bold text-[#212121]">{t('pregnancyTrackingPage.title')}</h1>
+                <p className="text-sm text-[#757575]">{t('pregnancyTrackingPage.subtitle')}</p>
               </div>
             </div>
+            <LanguageSwitcher />
           </div>
         </div>
       </header>

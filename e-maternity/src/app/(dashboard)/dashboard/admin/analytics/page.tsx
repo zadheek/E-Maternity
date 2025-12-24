@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import axios from 'axios';
@@ -66,13 +66,7 @@ export default function AnalyticsPage() {
     }
   }, [user, authLoading, router]);
 
-  useEffect(() => {
-    if (user?.role === 'ADMIN') {
-      fetchAnalytics();
-    }
-  }, [user, timeRange, selectedDistrict]);
-
-  const fetchAnalytics = async () => {
+  const fetchAnalytics = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams({
@@ -86,11 +80,16 @@ export default function AnalyticsPage() {
       }
     } catch (error) {
       console.error('Failed to fetch analytics:', error);
-      toast.error('Failed to load analytics data');
     } finally {
       setLoading(false);
     }
-  };
+  }, [timeRange, selectedDistrict]);
+
+  useEffect(() => {
+    if (user?.role === 'ADMIN') {
+      fetchAnalytics();
+    }
+  }, [user, fetchAnalytics]);
 
   if (authLoading || !user || user.role !== 'ADMIN') {
     return (

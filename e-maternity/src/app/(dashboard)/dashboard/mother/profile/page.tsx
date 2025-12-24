@@ -14,6 +14,8 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
+import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
+import { useTranslations } from 'next-intl';
 
 interface MotherProfileData {
   // User details
@@ -62,6 +64,7 @@ interface MotherProfileData {
 export default function ProfilePage() {
   const { user } = useAuth('MOTHER');
   const router = useRouter();
+  const t = useTranslations();
   const [profile, setProfile] = useState<MotherProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -76,7 +79,7 @@ export default function ProfilePage() {
       const response = await axios.get('/api/profile/mother/full');
       setProfile(response.data.data);
     } catch (error) {
-      console.error('Failed to fetch profile:', error);
+      
       toast.error('Failed to load profile');
     } finally {
       setLoading(false);
@@ -89,11 +92,11 @@ export default function ProfilePage() {
     setSaving(true);
     try {
       await axios.patch('/api/profile/mother', profile);
-      toast.success('Profile updated successfully');
+      toast.success(t('profilePage.profileUpdated'));
       setIsEditing(false);
       fetchProfile();
     } catch (error) {
-      console.error('Failed to update profile:', error);
+      
       toast.error('Failed to update profile');
     } finally {
       setSaving(false);
@@ -165,11 +168,11 @@ export default function ProfilePage() {
                 onClick={() => router.push('/dashboard/mother')}
               >
                 <Icons.ChevronLeft className="w-5 h-5 mr-1" />
-                Back
+                {t('common.back')}
               </Button>
               <div>
-                <h1 className="text-2xl font-bold text-[#212121]">My Profile</h1>
-                <p className="text-sm text-[#757575]">Manage your personal information</p>
+                <h1 className="text-2xl font-bold text-[#212121]">{t('profilePage.title')}</h1>
+                <p className="text-sm text-[#757575]">{t('profilePage.subtitle')}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -183,7 +186,7 @@ export default function ProfilePage() {
                     }}
                     disabled={saving}
                   >
-                    Cancel
+                    {t('common.cancel')}
                   </Button>
                   <Button
                     onClick={handleSave}
@@ -193,12 +196,12 @@ export default function ProfilePage() {
                     {saving ? (
                       <>
                         <Icons.Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Saving...
+                        {t('profilePage.saving')}
                       </>
                     ) : (
                       <>
                         <Icons.Save className="w-4 h-4 mr-2" />
-                        Save Changes
+                        {t('profilePage.updateProfile')}
                       </>
                     )}
                   </Button>
@@ -210,14 +213,14 @@ export default function ProfilePage() {
                     className="bg-[#2196F3] hover:bg-[#1976D2]"
                   >
                     <Icons.Edit className="w-4 h-4 mr-2" />
-                    Edit Profile
+                    {t('common.edit')}
                   </Button>
                   <Button
                     onClick={() => signOut({ callbackUrl: '/login' })}
                     variant="outline"
                   >
                     <Icons.LogOut className="w-4 h-4 mr-2" />
-                    Logout
+                    {t('common.logout')}
                   </Button>
                 </>
               )}
@@ -266,7 +269,7 @@ export default function ProfilePage() {
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-[#757575] mb-1">Risk Level</p>
+                    <p className="text-xs text-[#757575] mb-1">{t('profilePage.riskLevel')}</p>
                     <Badge className={
                       profile.riskLevel === 'HIGH' || profile.riskLevel === 'CRITICAL' 
                         ? 'bg-red-100 text-red-800'
@@ -278,7 +281,7 @@ export default function ProfilePage() {
                     </Badge>
                   </div>
                   <div>
-                    <p className="text-xs text-[#757575] mb-1">Blood Type</p>
+                    <p className="text-xs text-[#757575] mb-1">{t('profilePage.bloodType')}</p>
                     <p className="font-medium">{profile.bloodType.replace('_', '')}</p>
                   </div>
                 </div>
@@ -291,13 +294,13 @@ export default function ProfilePage() {
             {/* Personal Information */}
             <Card>
               <CardHeader>
-                <CardTitle>Personal Information</CardTitle>
-                <CardDescription>Basic details about you</CardDescription>
+                <CardTitle>{t('profilePage.personalInfo')}</CardTitle>
+                <CardDescription>{t('profilePage.subtitle')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="firstName">First Name</Label>
+                    <Label htmlFor="firstName">{t('profilePage.firstName')}</Label>
                     <Input
                       id="firstName"
                       value={profile.firstName}
@@ -306,7 +309,7 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="lastName">Last Name</Label>
+                    <Label htmlFor="lastName">{t('profilePage.lastName')}</Label>
                     <Input
                       id="lastName"
                       value={profile.lastName}
@@ -315,7 +318,7 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email">{t('profilePage.email')}</Label>
                     <Input
                       id="email"
                       type="email"
@@ -325,7 +328,7 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="phoneNumber">Phone Number</Label>
+                    <Label htmlFor="phoneNumber">{t('profilePage.phoneNumber')}</Label>
                     <Input
                       id="phoneNumber"
                       value={profile.phoneNumber}
@@ -334,7 +337,7 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="dateOfBirth">Date of Birth</Label>
+                    <Label htmlFor="dateOfBirth">{t('profilePage.dateOfBirth')}</Label>
                     <Input
                       id="dateOfBirth"
                       type="date"
@@ -344,7 +347,7 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="nic">NIC Number</Label>
+                    <Label htmlFor="nic">{t('profilePage.nic')}</Label>
                     <Input
                       id="nic"
                       value={profile.nic}
@@ -359,13 +362,13 @@ export default function ProfilePage() {
             {/* Pregnancy Information */}
             <Card>
               <CardHeader>
-                <CardTitle>Pregnancy Information</CardTitle>
-                <CardDescription>Details about your current pregnancy</CardDescription>
+                <CardTitle>{t('pregnancyTracking.title')}</CardTitle>
+                <CardDescription>{t('pregnancyTrackingPage.subtitle')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="pregnancyStartDate">Pregnancy Start Date</Label>
+                    <Label htmlFor="pregnancyStartDate">{t('profilePage.pregnancyStartDate')}</Label>
                     <Input
                       id="pregnancyStartDate"
                       type="date"
@@ -375,7 +378,7 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="expectedDeliveryDate">Expected Delivery Date</Label>
+                    <Label htmlFor="expectedDeliveryDate">{t('profilePage.expectedDeliveryDate')}</Label>
                     <Input
                       id="expectedDeliveryDate"
                       type="date"
@@ -385,7 +388,7 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="pregnancyWeek">Current Week</Label>
+                    <Label htmlFor="pregnancyWeek">{t('pregnancyTrackingPage.week')}</Label>
                     <Input
                       id="pregnancyWeek"
                       type="number"
@@ -395,7 +398,7 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="bloodType">Blood Type</Label>
+                    <Label htmlFor="bloodType">{t('profilePage.bloodType')}</Label>
                     <Select
                       value={profile.bloodType}
                       onValueChange={(value) => setProfile({ ...profile, bloodType: value })}
@@ -423,12 +426,12 @@ export default function ProfilePage() {
             {/* Address Information */}
             <Card>
               <CardHeader>
-                <CardTitle>Address</CardTitle>
-                <CardDescription>Your residential address</CardDescription>
+                <CardTitle>{t('profilePage.street')}</CardTitle>
+                <CardDescription>{t('profilePage.subtitle')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="street">Street Address</Label>
+                  <Label htmlFor="street">{t('profilePage.street')}</Label>
                   <Input
                     id="street"
                     value={profile.street}
@@ -438,7 +441,7 @@ export default function ProfilePage() {
                 </div>
                 <div className="grid md:grid-cols-3 gap-4">
                   <div>
-                    <Label htmlFor="city">City</Label>
+                    <Label htmlFor="city">{t('profilePage.city')}</Label>
                     <Input
                       id="city"
                       value={profile.city}
@@ -447,7 +450,7 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="district">District</Label>
+                    <Label htmlFor="district">{t('profilePage.district')}</Label>
                     <Input
                       id="district"
                       value={profile.district}
@@ -456,7 +459,7 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="postalCode">Postal Code</Label>
+                    <Label htmlFor="postalCode">{t('profilePage.postalCode')}</Label>
                     <Input
                       id="postalCode"
                       value={profile.postalCode}
@@ -471,13 +474,13 @@ export default function ProfilePage() {
             {/* Medical History */}
             <Card>
               <CardHeader>
-                <CardTitle>Medical History</CardTitle>
-                <CardDescription>Previous pregnancies and health conditions</CardDescription>
+                <CardTitle>{t('profilePage.medicalHistory')}</CardTitle>
+                <CardDescription>{t('profilePage.subtitle')}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid md:grid-cols-3 gap-4">
                   <div>
-                    <Label htmlFor="previousPregnancies">Previous Pregnancies</Label>
+                    <Label htmlFor="previousPregnancies">{t('profilePage.previousPregnancies')}</Label>
                     <Input
                       id="previousPregnancies"
                       type="number"
@@ -487,7 +490,7 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="previousCesareans">Previous Cesareans</Label>
+                    <Label htmlFor="previousCesareans">{t('profilePage.previousCesareans')}</Label>
                     <Input
                       id="previousCesareans"
                       type="number"
@@ -497,7 +500,7 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="previousMiscarriages">Previous Miscarriages</Label>
+                    <Label htmlFor="previousMiscarriages">{t('profilePage.previousMiscarriages')}</Label>
                     <Input
                       id="previousMiscarriages"
                       type="number"
@@ -508,7 +511,7 @@ export default function ProfilePage() {
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="previousSurgeries">Previous Surgeries (comma separated)</Label>
+                  <Label htmlFor="previousSurgeries">{t('profilePage.previousSurgeries')} ({t('profilePage.enterOnePerLine')})</Label>
                   <Textarea
                     id="previousSurgeries"
                     value={profile.previousSurgeries?.join(', ') || ''}
@@ -519,7 +522,7 @@ export default function ProfilePage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="chronicConditions">Chronic Conditions (comma separated)</Label>
+                  <Label htmlFor="chronicConditions">{t('profilePage.chronicConditions')} ({t('profilePage.enterOnePerLine')})</Label>
                   <Textarea
                     id="chronicConditions"
                     value={profile.chronicConditions.join(', ')}
@@ -529,7 +532,7 @@ export default function ProfilePage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="allergies">Allergies (comma separated)</Label>
+                  <Label htmlFor="allergies">{t('profilePage.allergies')} ({t('profilePage.enterOnePerLine')})</Label>
                   <Textarea
                     id="allergies"
                     value={profile.allergies.join(', ')}
@@ -539,7 +542,7 @@ export default function ProfilePage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="currentMedications">Current Medications (comma separated)</Label>
+                  <Label htmlFor="currentMedications">{t('profilePage.currentMedications')} ({t('profilePage.enterOnePerLine')})</Label>
                   <Textarea
                     id="currentMedications"
                     value={profile.currentMedications.join(', ')}
@@ -549,7 +552,7 @@ export default function ProfilePage() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="familyHistory">Family History (comma separated)</Label>
+                  <Label htmlFor="familyHistory">{t('profilePage.familyHistory')} ({t('profilePage.enterOnePerLine')})</Label>
                   <Textarea
                     id="familyHistory"
                     value={profile.familyHistory.join(', ')}
@@ -566,8 +569,8 @@ export default function ProfilePage() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle>Emergency Contacts</CardTitle>
-                    <CardDescription>People to contact in case of emergency</CardDescription>
+                    <CardTitle>{t('profilePage.emergencyContacts')}</CardTitle>
+                    <CardDescription>{t('emergencyPage.subtitle')}</CardDescription>
                   </div>
                   {isEditing && (
                     <Button
@@ -576,7 +579,7 @@ export default function ProfilePage() {
                       className="bg-[#00BCD4] hover:bg-[#0097A7]"
                     >
                       <Icons.Plus className="w-4 h-4 mr-1" />
-                      Add Contact
+                      {t('profilePage.addContact')}
                     </Button>
                   )}
                 </div>
@@ -589,7 +592,7 @@ export default function ProfilePage() {
                         <Icons.Phone className="w-4 h-4 text-[#757575]" />
                         <span className="font-medium">Contact {index + 1}</span>
                         {contact.isPrimary && (
-                          <Badge variant="outline" className="text-xs">Primary</Badge>
+                          <Badge variant="outline" className="text-xs">{t('profilePage.primaryContact')}</Badge>
                         )}
                       </div>
                       {isEditing && (
@@ -604,7 +607,7 @@ export default function ProfilePage() {
                     </div>
                     <div className="grid md:grid-cols-2 gap-3">
                       <div>
-                        <Label>Name</Label>
+                        <Label>{t('profilePage.contactName')}</Label>
                         <Input
                           value={contact.name}
                           onChange={(e) => updateEmergencyContact(index, 'name', e.target.value)}
@@ -612,7 +615,7 @@ export default function ProfilePage() {
                         />
                       </div>
                       <div>
-                        <Label>Relationship</Label>
+                        <Label>{t('profilePage.relationship')}</Label>
                         <Input
                           value={contact.relationship}
                           onChange={(e) => updateEmergencyContact(index, 'relationship', e.target.value)}
@@ -620,7 +623,7 @@ export default function ProfilePage() {
                         />
                       </div>
                       <div>
-                        <Label>Phone Number</Label>
+                        <Label>{t('profilePage.contactPhone')}</Label>
                         <Input
                           value={contact.phoneNumber}
                           onChange={(e) => updateEmergencyContact(index, 'phoneNumber', e.target.value)}
@@ -636,14 +639,14 @@ export default function ProfilePage() {
                             disabled={!isEditing}
                             className="w-4 h-4"
                           />
-                          <span className="text-sm">Primary Contact</span>
+                          <span className="text-sm">{t('profilePage.primaryContact')}</span>
                         </label>
                       </div>
                     </div>
                   </div>
                 ))}
                 {profile.emergencyContacts.length === 0 && (
-                  <p className="text-center text-[#757575] py-8">No emergency contacts added yet</p>
+                  <p className="text-center text-[#757575] py-8">{t('profilePage.noContacts')}</p>
                 )}
               </CardContent>
             </Card>

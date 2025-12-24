@@ -27,6 +27,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
+import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
+import { useTranslations } from 'next-intl';
 
 interface Appointment {
   id: string;
@@ -46,6 +48,7 @@ interface Appointment {
 export default function AppointmentsPage() {
   const { user } = useAuth('MOTHER');
   const router = useRouter();
+  const t = useTranslations();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
@@ -67,7 +70,7 @@ export default function AppointmentsPage() {
       const response = await axios.get('/api/appointments');
       setAppointments(response.data.data || []);
     } catch (error) {
-      console.error('Failed to fetch appointments:', error);
+      toast.error('Failed to load appointments');
     } finally {
       setLoading(false);
     }
@@ -82,11 +85,11 @@ export default function AppointmentsPage() {
       await axios.patch(`/api/appointments/${selectedAppointment.id}`, {
         scheduledDate: scheduledDate.toISOString(),
       });
-      toast.success('Appointment rescheduled successfully');
+      toast.success(t('appointmentsPage.appointmentCancelled'));
       setShowRescheduleDialog(false);
       fetchAppointments();
     } catch (error) {
-      console.error('Failed to reschedule appointment:', error);
+      
       toast.error('Failed to reschedule appointment');
     } finally {
       setActionLoading(false);
@@ -101,11 +104,11 @@ export default function AppointmentsPage() {
       await axios.patch(`/api/appointments/${selectedAppointment.id}`, {
         status: 'CANCELLED',
       });
-      toast.success('Appointment cancelled successfully');
+      toast.success(t('appointmentsPage.appointmentCancelled'));
       setShowCancelDialog(false);
       fetchAppointments();
     } catch (error) {
-      console.error('Failed to cancel appointment:', error);
+      
       toast.error('Failed to cancel appointment');
     } finally {
       setActionLoading(false);
@@ -125,7 +128,7 @@ export default function AppointmentsPage() {
       setShowEditDialog(false);
       fetchAppointments();
     } catch (error) {
-      console.error('Failed to update appointment:', error);
+      
       toast.error('Failed to update appointment');
     } finally {
       setActionLoading(false);
@@ -189,20 +192,23 @@ export default function AppointmentsPage() {
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="sm" onClick={() => router.push('/dashboard/mother')}>
               <Icons.ChevronLeft className="w-4 h-4 mr-2" />
-              Back
+              {t('common.back')}
             </Button>
             <div>
-              <h1 className="text-2xl font-bold text-[#212121]">Appointments</h1>
-              <p className="text-sm text-[#757575]">Manage your healthcare visits</p>
+              <h1 className="text-2xl font-bold text-[#212121]">{t('appointmentsPage.title')}</h1>
+              <p className="text-sm text-[#757575]">{t('appointmentsPage.subtitle')}</p>
             </div>
           </div>
-          <Button 
-            className="bg-[#00BCD4] hover:bg-[#0097A7]"
-            onClick={() => router.push('/dashboard/mother/appointments/schedule')}
-          >
-            <Icons.Plus className="w-4 h-4 mr-2" />
-            Schedule New
-          </Button>
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher />
+            <Button 
+              className="bg-[#00BCD4] hover:bg-[#0097A7]"
+              onClick={() => router.push('/dashboard/mother/appointments/schedule')}
+            >
+              <Icons.Plus className="w-4 h-4 mr-2" />
+              {t('appointmentsPage.scheduleNew')}
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -216,18 +222,18 @@ export default function AppointmentsPage() {
             {/* Upcoming Appointments */}
             <div>
               <h2 className="text-xl font-bold text-[#212121] mb-4">
-                Upcoming Appointments ({upcomingAppointments.length})
+                {t('appointmentsPage.upcoming')} ({upcomingAppointments.length})
               </h2>
               {upcomingAppointments.length === 0 ? (
                 <Card>
                   <CardContent className="text-center py-12">
                     <Icons.Calendar className="w-12 h-12 mx-auto mb-4 text-[#757575] opacity-50" />
-                    <p className="text-[#757575] mb-4">No upcoming appointments scheduled</p>
+                    <p className="text-[#757575] mb-4">{t('appointmentsPage.noAppointments')}</p>
                     <Button 
                       className="bg-[#00BCD4] hover:bg-[#0097A7]"
                       onClick={() => router.push('/dashboard/mother/appointments/schedule')}
                     >
-                      Schedule Your First Appointment
+                      {t('appointmentsPage.scheduleNew')}
                     </Button>
                   </CardContent>
                 </Card>

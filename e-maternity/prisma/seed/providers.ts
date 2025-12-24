@@ -148,11 +148,12 @@ async function seedProviders() {
       });
       created++;
       console.log(`✅ Created doctor: Dr. ${doctor.firstName} ${doctor.lastName}`);
-    } catch (error: any) {
-      if (error.code === 'P2002') {
+    } catch (error) {
+      const prismaError = error as { code?: string; message?: string };
+      if (prismaError.code === 'P2002') {
         console.log(`⏩ Doctor already exists: Dr. ${doctor.firstName} ${doctor.lastName}`);
       } else {
-        console.error(`❌ Error creating doctor ${doctor.firstName} ${doctor.lastName}:`, error.message);
+        console.error(`❌ Error creating doctor ${doctor.firstName} ${doctor.lastName}:`, prismaError.message);
       }
     }
   }
@@ -180,11 +181,12 @@ async function seedProviders() {
       });
       created++;
       console.log(`✅ Created midwife: ${midwife.firstName} ${midwife.lastName}`);
-    } catch (error: any) {
-      if (error.code === 'P2002') {
+    } catch (error) {
+      const prismaError = error as { code?: string; message?: string };
+      if (prismaError.code === 'P2002') {
         console.log(`⏩ Midwife already exists: ${midwife.firstName} ${midwife.lastName}`);
       } else {
-        console.error(`❌ Error creating midwife ${midwife.firstName} ${midwife.lastName}:`, error.message);
+        console.error(`❌ Error creating midwife ${midwife.firstName} ${midwife.lastName}:`, prismaError.message);
       }
     }
   }

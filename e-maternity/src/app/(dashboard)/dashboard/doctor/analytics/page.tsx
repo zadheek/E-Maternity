@@ -39,7 +39,7 @@ interface AnalyticsData {
 }
 
 export default function DoctorAnalyticsPage() {
-  const { user } = useAuth('DOCTOR');
+  useAuth('DOCTOR');
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);

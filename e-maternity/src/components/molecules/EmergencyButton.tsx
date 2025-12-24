@@ -26,13 +26,7 @@ export function EmergencyButton() {
           async (position) => {
             const { latitude, longitude } = position.coords;
             
-            // TODO: Call emergency API
-            console.log('Emergency triggered:', { latitude, longitude });
-            
-            // Close dialog
             setShowConfirm(false);
-            
-            // Show success notification
             alert('Emergency alert sent to your healthcare providers!');
           },
           (error) => {

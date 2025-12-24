@@ -83,7 +83,7 @@ export function SOSButton() {
       setOpen(false);
       setEmergencyType('');
       setDescription('');
-    } catch (error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to send emergency alert. Please call emergency services.',

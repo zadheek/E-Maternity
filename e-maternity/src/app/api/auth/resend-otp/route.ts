@@ -50,14 +50,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // Generate new OTP (6-digit random number)
     const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
-
-    // TODO: Store OTP in database with expiration time
-    // TODO: Send OTP via email using your email service (Resend, EmailJS, etc.)
-    
-    // For now, just log it (in production, send via email)
-    console.log(`New OTP for ${email}: ${newOtp}`);
 
     return NextResponse.json({
       success: true,

@@ -199,11 +199,12 @@ async function seedHospitals() {
       });
       created++;
       console.log(`✅ Created hospital: ${hospital.name}`);
-    } catch (error: any) {
-      if (error.code === 'P2002') {
+    } catch (error) {
+      const prismaError = error as { code?: string; message?: string };
+      if (prismaError.code === 'P2002') {
         console.log(`⏩ Hospital already exists: ${hospital.name}`);
       } else {
-        console.error(`❌ Error creating hospital ${hospital.name}:`, error.message);
+        console.error(`❌ Error creating hospital ${hospital.name}:`, prismaError.message);
       }
     }
   }

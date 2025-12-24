@@ -1,7 +1,6 @@
-version: '3.8'
-
 services:
-  postgres:
+  #database service
+  postgres: 
     image: postgres:16-alpine
     container_name: e-maternity-db
     restart: always
@@ -18,6 +17,35 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - e-maternity-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        DATABASE_URL: postgresql://postgres:postgres@postgres:5432/e_maternity?schema=public
+    container_name: e-maternity-app
+    restart: always
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/e_maternity?schema=public
+      - NEXTAUTH_URL=http://localhost:3000
+      - NEXTAUTH_SECRET=change-this-to-a-random-secret-in-production-min-32-chars
+      - JWT_SECRET=change-this-jwt-secret-to-a-random-string-min-32-chars
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - e-maternity-network
+    command: sh -c "npx prisma migrate deploy && node server.js"
+
+networks:
+  e-maternity-network:
+    driver: bridge
 
 volumes:
   postgres_data:

@@ -36,7 +36,7 @@ interface Prescription {
 }
 
 export default function DoctorPrescriptionsPage() {
-  const { user } = useAuth('DOCTOR');
+  useAuth('DOCTOR');
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);

@@ -1,0 +1,117 @@
+services:
+  # Database service
+  postgres:
+    image: postgres:16-alpine
+    container_name: e-maternity-db-dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: e_maternity
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - e-maternity-network
+
+  # Development app service with hot reload
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      args:
+        DATABASE_URL: postgresql://postgres:postgres@postgres:5432/e_maternity?schema=public
+    container_name: e-maternity-app-dev
+    restart: unless-stopped
+    ports:
+      - '3001:3000'  # Map to 3001 to avoid conflict with production
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/e_maternity?schema=public
+      - NEXTAUTH_URL=${NEXTAUTH_URL:-http://localhost:3001}
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-dev-secret-change-in-production-min-32-characters-long}
+      - JWT_SECRET=${JWT_SECRET:-dev-jwt-secret-change-in-production-min-32-chars}
+      - NEXT_TELEMETRY_DISABLED=1
+      - WATCHPACK_POLLING=true  # Enable polling for file changes in Docker
+      - CHOKIDAR_USEPOLLING=true  # Alternative file watcher
+      # Email Configuration
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
+      - SMTP_FROM_EMAIL=${SMTP_FROM_EMAIL}
+      - SMTP_FROM_NAME=${SMTP_FROM_NAME}
+      # Twilio Configuration (for SMS)
+      - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
+      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
+      - TWILIO_PHONE_NUMBER=${TWILIO_PHONE_NUMBER}
+      # Google Maps Configuration
+      - NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=${NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - e-maternity-network
+    command: sh -c "npx prisma generate && npx prisma migrate deploy && npm run dev"
+    develop:
+      watch:
+        # Sync source files for hot reloading
+        - action: sync
+          path: ./src
+          target: /app/src
+          ignore:
+            - node_modules/
+        - action: sync
+          path: ./public
+          target: /app/public
+        - action: sync
+          path: ./prisma
+          target: /app/prisma
+        - action: sync
+          path: ./messages
+          target: /app/messages
+        - action: sync
+          path: ./docs
+          target: /app/docs
+        - action: sync
+          path: ./scripts
+          target: /app/scripts
+        - action: sync
+          path: ./next.config.ts
+          target: /app/next.config.ts
+        - action: sync
+          path: ./tailwind.config.ts
+          target: /app/tailwind.config.ts
+        - action: sync
+          path: ./tsconfig.json
+          target: /app/tsconfig.json
+        - action: sync
+          path: ./postcss.config.mjs
+          target: /app/postcss.config.mjs
+        - action: sync
+          path: ./components.json
+          target: /app/components.json
+        - action: sync
+          path: ./prisma.config.ts
+          target: /app/prisma.config.ts
+        # Rebuild container when package.json changes
+        - action: rebuild
+          path: ./package.json
+        - action: rebuild
+          path: ./package-lock.json
+        # Rebuild when Prisma schema changes
+        - action: rebuild
+          path: ./prisma/schema.prisma
+
+networks:
+  e-maternity-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

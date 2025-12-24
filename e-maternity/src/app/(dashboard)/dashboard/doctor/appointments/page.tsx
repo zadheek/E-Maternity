@@ -3,7 +3,7 @@
 import { useAuth } from '@/hooks/useAuth';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Icons } from '@/components/icons';
@@ -31,7 +31,7 @@ interface Appointment {
 }
 
 export default function DoctorAppointmentsPage() {
-  const { user } = useAuth('DOCTOR');
+  useAuth('DOCTOR');
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [appointments, setAppointments] = useState<Appointment[]>([]);

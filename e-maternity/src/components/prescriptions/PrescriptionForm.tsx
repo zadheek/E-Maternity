@@ -88,7 +88,7 @@ export function PrescriptionForm({ open, onOpenChange, motherId, onSuccess }: Pr
       onOpenChange(false);
       
       if (onSuccess) onSuccess();
-    } catch (_error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to create prescription',

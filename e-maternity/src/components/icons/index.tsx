@@ -62,6 +62,10 @@ import {
   Printer,
   XCircle,
   Thermometer,
+  Circle,
+  Languages,
+  Check,
+  Shield,
 } from 'lucide-react';
 
 export const Icons = {
@@ -73,6 +77,7 @@ export const Icons = {
   Baby,
   Hospital,
   Ambulance,
+  Shield,
 
   // UI & Navigation
   Calendar,
@@ -132,6 +137,7 @@ export const Icons = {
   Mail,
   Printer,
   XCircle,
+  Circle,
   Thermometer,
 
   // Charts & Analytics
@@ -143,6 +149,8 @@ export const Icons = {
   
   // Internationalization
   Globe,
+  Languages,
+  Check,
 
   // Security
   Lock,

@@ -14,6 +14,7 @@ import { ContractionTimer } from '@/components/tools/ContractionTimer';
 import { SOSButton } from '@/components/emergency/SOSButton';
 import axios from 'axios';
 import { MetricType } from '@/types/prisma.types';
+import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
 
 interface MotherProfile {
   pregnancyWeek: number;
@@ -83,7 +84,7 @@ export default function MotherDashboardNew() {
       setAppointments(appointmentsRes.data.data || []);
       setPrescriptions(prescriptionsRes.data.data || []);
     } catch (error) {
-      console.error('Failed to fetch dashboard data:', error);
+      
     } finally {
       setLoadingData(false);
     }
@@ -119,13 +120,16 @@ export default function MotherDashboardNew() {
   return (
     <div className="container mx-auto p-6 max-w-7xl">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-[#212121] mb-2">
-          Welcome back, {user?.firstName || 'Mother'}! 👋
-        </h1>
-        <p className="text-[#757575]">
-          Track your pregnancy journey and stay healthy
-        </p>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-[#212121] mb-2">
+            Welcome back, {user?.firstName || 'Mother'}! 👋
+          </h1>
+          <p className="text-[#757575]">
+            Track your pregnancy journey and stay healthy
+          </p>
+        </div>
+        <LanguageSwitcher />
       </div>
 
       {/* Profile Summary Card */}
@@ -331,7 +335,7 @@ export default function MotherDashboardNew() {
 
         {/* Medications Tab */}
         <TabsContent value="medications">
-          <MedicationTracker prescriptions={activePrescriptions} />
+          <MedicationTracker prescriptions={activePrescriptions as any} />
         </TabsContent>
 
         {/* Tools Tab */}

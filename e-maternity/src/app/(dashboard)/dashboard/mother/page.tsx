@@ -11,8 +11,12 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { useTranslations } from 'next-intl';
 import { toast } from 'sonner';
+import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
+import { VitaminCard } from '@/components/vitamins/VitaminCard';
+import { ImmunizationCard } from '@/components/immunizations/ImmunizationCard';
 
 interface MotherProfile {
+  id: string;
   pregnancyWeek: number;
   expectedDeliveryDate: string;
   riskLevel: string;
@@ -45,22 +49,29 @@ export default function MotherDashboard() {
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [recentMetrics, setRecentMetrics] = useState<HealthMetric[]>([]);
   const [upcomingAppointments, setUpcomingAppointments] = useState<Appointment[]>([]);
+  const [vitamins, setVitamins] = useState<any[]>([]);
+  const [immunizations, setImmunizations] = useState<any[]>([]);
   const [loadingData, setLoadingData] = useState(true);
   const t = useTranslations();
 
   useEffect(() => {
     if (user?.id) {
       fetchProfile();
-      fetchRecentData();
     }
   }, [user]);
+
+  useEffect(() => {
+    if (profile?.id) {
+      fetchRecentData();
+    }
+  }, [profile]);
 
   const fetchProfile = async () => {
     try {
       const response = await axios.get('/api/profile/mother');
       setProfile(response.data.data);
     } catch (error) {
-      console.error('Failed to fetch profile:', error);
+      // Error handled silently
     } finally {
       setLoadingProfile(false);
     }
@@ -79,8 +90,17 @@ export default function MotherDashboard() {
         new Date(apt.scheduledDate) >= new Date() && apt.status !== 'COMPLETED' && apt.status !== 'CANCELLED'
       );
       setUpcomingAppointments(upcoming.slice(0, 5));
+
+      // Fetch vitamins and immunizations
+      if (profile?.id) {
+        const vitaminsResponse = await axios.get(`/api/vitamins?motherProfileId=${profile.id}&isActive=true`);
+        setVitamins(vitaminsResponse.data.data || []);
+
+        const immunizationsResponse = await axios.get(`/api/immunizations?motherProfileId=${profile.id}`);
+        setImmunizations(immunizationsResponse.data.data || []);
+      }
     } catch (error) {
-      console.error('Failed to fetch recent data:', error);
+      // Error handled silently
     } finally {
       setLoadingData(false);
     }
@@ -133,6 +153,7 @@ export default function MotherDashboard() {
             <span className="text-sm text-[#757575]">
               {t('common.welcome')}, {(user as any)?.firstName}
             </span>
+            <LanguageSwitcher />
             <Button
               variant="ghost"
               size="sm"
@@ -165,7 +186,7 @@ export default function MotherDashboard() {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           <Card 
             className="cursor-pointer hover:shadow-lg transition-shadow"
             onClick={() => router.push('/dashboard/mother/health-metrics')}
@@ -227,6 +248,19 @@ export default function MotherDashboard() {
               <CardTitle>{t('quickActions.telemedicine')}</CardTitle>
               <CardDescription>
                 {t('quickActions.telemedicineDesc')}
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
+          <Card 
+            className="cursor-pointer hover:shadow-lg transition-shadow"
+            onClick={() => router.push('/dashboard/mother/profile')}
+          >
+            <CardHeader>
+              <Icons.User className="w-10 h-10 text-[#FF9800] mb-2" />
+              <CardTitle>My Profile</CardTitle>
+              <CardDescription>
+                View and update your information
               </CardDescription>
             </CardHeader>
           </Card>
@@ -334,6 +368,81 @@ export default function MotherDashboard() {
                   >
                     {t('common.viewAll')}
                   </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Vitamins & Immunizations Section */}
+        <div className="grid lg:grid-cols-2 gap-6 mt-6">
+          <Card>
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle>My Vitamins & Supplements</CardTitle>
+                  <CardDescription>Current vitamin supplementation plan</CardDescription>
+                </div>
+                <Icons.Pill className="w-6 h-6 text-[#9C27B0]" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              {loadingData ? (
+                <div className="text-center py-8">
+                  <Icons.Activity className="w-8 h-8 mx-auto mb-2 animate-spin text-[#9C27B0]" />
+                </div>
+              ) : vitamins.length === 0 ? (
+                <div className="text-center py-8 text-[#757575]">
+                  <Icons.Pill className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p>No vitamins prescribed yet</p>
+                  <p className="text-xs mt-2">Your healthcare provider will prescribe vitamins during your visits</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {vitamins.slice(0, 3).map((vitamin) => (
+                    <VitaminCard key={vitamin.id} vitamin={vitamin} />
+                  ))}
+                  {vitamins.length > 3 && (
+                    <p className="text-xs text-center text-[#757575] mt-2">
+                      +{vitamins.length - 3} more vitamins
+                    </p>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle>My Immunizations</CardTitle>
+                  <CardDescription>Vaccination record & schedule</CardDescription>
+                </div>
+                <Icons.Shield className="w-6 h-6 text-[#4CAF50]" />
+              </div>
+            </CardHeader>
+            <CardContent>
+              {loadingData ? (
+                <div className="text-center py-8">
+                  <Icons.Activity className="w-8 h-8 mx-auto mb-2 animate-spin text-[#4CAF50]" />
+                </div>
+              ) : immunizations.length === 0 ? (
+                <div className="text-center py-8 text-[#757575]">
+                  <Icons.Shield className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p>No immunizations recorded yet</p>
+                  <p className="text-xs mt-2">Ensure you receive tetanus and other recommended vaccines</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {immunizations.slice(0, 3).map((immunization) => (
+                    <ImmunizationCard key={immunization.id} immunization={immunization} />
+                  ))}
+                  {immunizations.length > 3 && (
+                    <p className="text-xs text-center text-[#757575] mt-2">
+                      +{immunizations.length - 3} more immunizations
+                    </p>
+                  )}
                 </div>
               )}
             </CardContent>

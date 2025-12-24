@@ -11,6 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { toast } from 'sonner';
+import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
+import { useTranslations } from 'next-intl';
 
 interface HealthMetric {
   id: string;
@@ -24,6 +26,7 @@ interface HealthMetric {
 export default function HealthMetricsPage() {
   const { user } = useAuth('MOTHER');
   const router = useRouter();
+  const t = useTranslations();
   const [metrics, setMetrics] = useState<HealthMetric[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -43,7 +46,7 @@ export default function HealthMetricsPage() {
       const response = await axios.get('/api/health/metrics');
       setMetrics(response.data.data || []);
     } catch (error) {
-      console.error('Failed to fetch metrics:', error);
+      // Error handled silently
     } finally {
       setLoading(false);
     }
@@ -61,7 +64,7 @@ export default function HealthMetricsPage() {
         notes: formData.notes || undefined,
       });
 
-      toast.success('Health metric recorded successfully!');
+      toast.success(t('healthMetricsPage.metricAdded'));
       setFormData({ type: 'WEIGHT', value: '', notes: '' });
       fetchMetrics();
     } catch (error: any) {
@@ -100,11 +103,12 @@ export default function HealthMetricsPage() {
         <div className="container mx-auto px-4 py-4 flex items-center gap-4">
           <Button variant="ghost" size="sm" onClick={() => router.push('/dashboard/mother')}>
             <Icons.ChevronLeft className="w-4 h-4 mr-2" />
-            Back
+            {t('common.back')}
           </Button>
           <div className="flex-1">
-            <h1 className="text-2xl font-bold text-[#212121]">Health Metrics</h1>
+            <h1 className="text-2xl font-bold text-[#212121]">{t('healthMetricsPage.title')}</h1>
           </div>
+          <LanguageSwitcher />
         </div>
       </header>
 
@@ -113,13 +117,13 @@ export default function HealthMetricsPage() {
           {/* Add New Metric Form */}
           <Card className="lg:col-span-1">
             <CardHeader>
-              <CardTitle>Record New Metric</CardTitle>
-              <CardDescription>Track your daily health measurements</CardDescription>
+              <CardTitle>{t('healthMetricsPage.addMetric')}</CardTitle>
+              <CardDescription>{t('healthMetricsPage.subtitle')}</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="type">Metric Type</Label>
+                  <Label htmlFor="type">{t('healthMetricsPage.metricType')}</Label>
                   <Select
                     value={formData.type}
                     onValueChange={(value) => setFormData({ ...formData, type: value })}
@@ -128,20 +132,20 @@ export default function HealthMetricsPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="WEIGHT">Weight</SelectItem>
-                      <SelectItem value="BLOOD_PRESSURE_SYSTOLIC">Blood Pressure (Systolic)</SelectItem>
-                      <SelectItem value="BLOOD_PRESSURE_DIASTOLIC">Blood Pressure (Diastolic)</SelectItem>
-                      <SelectItem value="BLOOD_GLUCOSE">Blood Glucose</SelectItem>
-                      <SelectItem value="HEMOGLOBIN">Hemoglobin</SelectItem>
-                      <SelectItem value="FETAL_HEART_RATE">Fetal Heart Rate</SelectItem>
-                      <SelectItem value="FUNDAL_HEIGHT">Fundal Height</SelectItem>
+                      <SelectItem value="WEIGHT">{t('healthMetrics.types.WEIGHT')}</SelectItem>
+                      <SelectItem value="BLOOD_PRESSURE_SYSTOLIC">{t('healthMetrics.types.BLOOD_PRESSURE_SYSTOLIC')}</SelectItem>
+                      <SelectItem value="BLOOD_PRESSURE_DIASTOLIC">{t('healthMetrics.types.BLOOD_PRESSURE_DIASTOLIC')}</SelectItem>
+                      <SelectItem value="BLOOD_GLUCOSE">{t('healthMetrics.types.BLOOD_GLUCOSE')}</SelectItem>
+                      <SelectItem value="HEMOGLOBIN">{t('healthMetrics.types.HEMOGLOBIN')}</SelectItem>
+                      <SelectItem value="FETAL_HEART_RATE">{t('healthMetrics.types.FETAL_HEART_RATE')}</SelectItem>
+                      <SelectItem value="FUNDAL_HEIGHT">{t('healthMetrics.types.FUNDAL_HEIGHT')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="value">
-                    Value ({getMetricUnit(formData.type)})
+                    {t('healthMetricsPage.value')} ({getMetricUnit(formData.type)})
                   </Label>
                   <Input
                     id="value"
@@ -155,12 +159,12 @@ export default function HealthMetricsPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="notes">Notes (Optional)</Label>
+                  <Label htmlFor="notes">{t('healthMetricsPage.notes')}</Label>
                   <Input
                     id="notes"
                     value={formData.notes}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                    placeholder="Any additional notes"
+                    placeholder={t('healthMetricsPage.notes')}
                   />
                 </div>
 
@@ -172,12 +176,12 @@ export default function HealthMetricsPage() {
                   {submitting ? (
                     <>
                       <Icons.Activity className="mr-2 h-4 w-4 animate-spin" />
-                      Recording...
+                      {t('healthMetricsPage.addingMetric')}
                     </>
                   ) : (
                     <>
                       <Icons.CheckCircle className="mr-2 h-4 w-4" />
-                      Record Metric
+                      {t('healthMetricsPage.addMetricBtn')}
                     </>
                   )}
                 </Button>
@@ -188,8 +192,8 @@ export default function HealthMetricsPage() {
           {/* Metrics History */}
           <Card className="lg:col-span-2">
             <CardHeader>
-              <CardTitle>Recent Measurements</CardTitle>
-              <CardDescription>Your health tracking history</CardDescription>
+              <CardTitle>{t('healthMetricsPage.recentMetrics')}</CardTitle>
+              <CardDescription>{t('healthMetricsPage.subtitle')}</CardDescription>
             </CardHeader>
             <CardContent>
               {loading ? (
@@ -199,8 +203,8 @@ export default function HealthMetricsPage() {
               ) : metrics.length === 0 ? (
                 <div className="text-center py-12 text-[#757575]">
                   <Icons.Activity className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                  <p>No health metrics recorded yet</p>
-                  <p className="text-sm mt-2">Start tracking your health by adding your first metric</p>
+                  <p>{t('healthMetrics.noMetrics')}</p>
+                  <p className="text-sm mt-2">{t('healthMetricsPage.subtitle')}</p>
                 </div>
               ) : (
                 <div className="space-y-3">

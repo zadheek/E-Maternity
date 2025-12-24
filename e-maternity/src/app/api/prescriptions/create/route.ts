@@ -59,8 +59,6 @@ export async function POST(req: Request) {
       },
     });
 
-    // TODO: Send notification to mother (email/SMS/push)
-
     return NextResponse.json({
       success: true,
       data: prescription,

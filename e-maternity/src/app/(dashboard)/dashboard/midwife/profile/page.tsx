@@ -27,7 +27,7 @@ interface MidwifeProfile {
 }
 
 export default function MidwifeProfilePage() {
-  const { user } = useAuth('MIDWIFE');
+  useAuth('MIDWIFE');
   const router = useRouter();
   const [profile, setProfile] = useState<MidwifeProfile | null>(null);
   const [isEditing, setIsEditing] = useState(false);

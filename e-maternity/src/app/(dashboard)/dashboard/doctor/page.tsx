@@ -17,6 +17,7 @@ import AllPatientsSection from '@/components/doctor/AllPatientsSection';
 import AppointmentsSection from '@/components/doctor/AppointmentsSection';
 import PrescriptionsSection from '@/components/doctor/PrescriptionsSection';
 import AnalyticsSection from '@/components/doctor/AnalyticsSection';
+import { PatientSearchBar } from '@/components/doctor/PatientSearchBar';
 
 type ViewSection = 'overview' | 'patients' | 'appointments' | 'prescriptions' | 'analytics';
 
@@ -96,6 +97,10 @@ export default function DoctorDashboardPage() {
               </p>
             </div>
             <div className="flex items-center gap-3">
+              {/* Quick Patient Search */}
+              <div className="w-96">
+                <PatientSearchBar />
+              </div>
               <Button
                 onClick={() => router.push('/dashboard/doctor/profile')}
                 variant="outline"

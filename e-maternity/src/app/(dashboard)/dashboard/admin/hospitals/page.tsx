@@ -39,7 +39,7 @@ interface Hospital {
 }
 
 export default function AdminHospitalsPage() {
-  const { user: _user } = useAuth('ADMIN');
+  useAuth('ADMIN');
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [hospitals, setHospitals] = useState<Hospital[]>([]);
@@ -70,7 +70,7 @@ export default function AdminHospitalsPage() {
     try {
       const response = await axios.get('/api/admin/hospitals');
       setHospitals(response.data.data);
-    } catch (error) {
+    } catch {
       toast.error('Failed to load hospitals');
     } finally {
       setLoading(false);
@@ -90,7 +90,7 @@ export default function AdminHospitalsPage() {
       setShowDialog(false);
       fetchHospitals();
       resetForm();
-    } catch (error) {
+    } catch {
       toast.error('Failed to save hospital');
     }
   };
@@ -101,7 +101,7 @@ export default function AdminHospitalsPage() {
       await axios.delete(`/api/admin/hospitals/${id}`);
       toast.success('Hospital deleted successfully');
       fetchHospitals();
-    } catch (error) {
+    } catch {
       toast.error('Failed to delete hospital');
     }
   };

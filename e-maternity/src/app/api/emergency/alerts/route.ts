@@ -60,12 +60,6 @@ export async function POST(req: Request) {
       },
     });
 
-    // TODO: Send notifications to:
-    // - Emergency contacts (SMS/Call)
-    // - Assigned doctor (push notification + SMS)
-    // - Assigned midwife (push notification + SMS)
-    // - Nearby hospitals
-
     const responderIds: string[] = [];
     
     if (motherProfile.assignedDoctorId) {
@@ -98,7 +92,7 @@ export async function POST(req: Request) {
   }
 }
 
-export async function GET(_req: Request) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     

@@ -28,7 +28,7 @@ interface PatientDetail {
 }
 
 export default function DoctorPatientsPage() {
-  const { user } = useAuth('DOCTOR');
+  useAuth('DOCTOR');
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [patients, setPatients] = useState<PatientDetail[]>([]);

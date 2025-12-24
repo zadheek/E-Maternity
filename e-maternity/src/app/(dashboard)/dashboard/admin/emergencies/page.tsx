@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import axios from 'axios';
@@ -80,13 +80,7 @@ export default function EmergenciesPage() {
     }
   }, [user, authLoading, router]);
 
-  useEffect(() => {
-    if (user?.role === 'ADMIN') {
-      fetchEmergencies();
-    }
-  }, [user, statusFilter, typeFilter]);
-
-  const fetchEmergencies = async () => {
+  const fetchEmergencies = useCallback(async () => {
     try {
       setLoading(true);
       const params = new URLSearchParams();
@@ -99,11 +93,16 @@ export default function EmergenciesPage() {
       }
     } catch (error) {
       console.error('Failed to fetch emergencies:', error);
-      toast.error('Failed to load emergency alerts');
     } finally {
       setLoading(false);
     }
-  };
+  }, [statusFilter, typeFilter]);
+
+  useEffect(() => {
+    if (user?.role === 'ADMIN') {
+      fetchEmergencies();
+    }
+  }, [user, fetchEmergencies]);
 
   const handleUpdateStatus = async (id: string, newStatus: string) => {
     try {

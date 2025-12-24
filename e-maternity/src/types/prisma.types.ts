@@ -1,16 +1,9 @@
 // Re-export all Prisma types and enums for consistent imports
-export {
+export type {
   User,
-  UserRole,
-  Language,
-  RiskLevel,
-  BloodType,
-  AppointmentStatus,
-  AppointmentType,
   MotherProfile,
   DoctorProfile,
   MidwifeProfile,
-  PHIProfile,
   HealthMetric,
   Appointment,
   Prescription,
@@ -22,6 +15,15 @@ export {
   ProgressNote,
   Referral,
   AppointmentSlot,
+} from '@prisma/client';
+
+export {
+  UserRole,
+  Language,
+  RiskLevel,
+  BloodType,
+  AppointmentStatus,
+  AppointmentType,
 } from '@prisma/client';
 
 // Define enum types that might not be in Prisma client

@@ -85,7 +85,7 @@ export function HealthMetricInput({ onSuccess }: HealthMetricInputProps) {
       setNotes('');
       
       if (onSuccess) onSuccess();
-    } catch (_error) {
+    } catch {
       toast({
         title: 'Error',
         description: 'Failed to save health metric',

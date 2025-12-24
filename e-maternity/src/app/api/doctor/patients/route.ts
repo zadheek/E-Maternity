@@ -45,16 +45,14 @@ export async function GET(req: Request) {
       );
     }
 
-    // Build filter
-    const whereClause: Prisma.MotherProfileWhereInput = {
-      assignedDoctorId: doctorProfile.id,
-    };
+    // Build filter - Allow all doctors to view all patients (hospital shift-based workflow)
+    const whereClause: Prisma.MotherProfileWhereInput = {};
 
     if (riskFilter) {
-      whereClause.riskLevel = riskFilter;
+      whereClause.riskLevel = riskFilter as any;
     }
 
-    // Get assigned patients with their user details
+    // Get all patients with their user details (not just assigned patients)
     const patients = await prisma.motherProfile.findMany({
       where: whereClause,
       include: {

@@ -9,7 +9,7 @@ interface HealthMetric {
   type: MetricType;
   value: number;
   unit: string;
-  recordedAt: Date;
+  recordedAt: Date | string;
 }
 
 interface HealthTrendChartProps {
@@ -57,7 +57,7 @@ export function HealthTrendChart({ metrics, metricType, title }: HealthTrendChar
         <div className="space-y-4">
           {/* Simple Line Chart */}
           <div className="relative h-32 flex items-end gap-2">
-            {filteredMetrics.map((metric, _index) => {
+            {filteredMetrics.map((metric) => {
               const height = ((metric.value - minValue) / range) * 100;
               return (
                 <div key={metric.id} className="flex-1 flex flex-col items-center gap-1">

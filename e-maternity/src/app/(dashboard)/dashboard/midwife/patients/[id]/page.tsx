@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { HealthTrendChart } from '@/components/health/HealthTrendChart';
+import { MetricType } from '@/types/prisma.types';
 
 interface PatientProfile {
   id: string;
@@ -57,7 +58,7 @@ interface HomeVisit {
   visitType: string;
   status: string;
   notes?: string;
-  observations?: any;
+  observations?: Record<string, unknown>;
   createdAt: string;
 }
 
@@ -87,14 +88,14 @@ interface Referral {
 }
 
 export default function MidwifePatientDetailPage() {
-  const { user } = useAuth('MIDWIFE');
+  useAuth('MIDWIFE');
   const params = useParams();
   const router = useRouter();
   const patientId = params.id as string;
 
   const [loading, setLoading] = useState(true);
   const [patient, setPatient] = useState<PatientProfile | null>(null);
-  const [healthMetrics, setHealthMetrics] = useState<any[]>([]);
+  const [healthMetrics, setHealthMetrics] = useState<Array<{ id: string; type: MetricType; value: number; unit: string; recordedAt: Date }>>([]);
   const [homeVisits, setHomeVisits] = useState<HomeVisit[]>([]);
   const [progressNotes, setProgressNotes] = useState<ProgressNote[]>([]);
   const [referrals, setReferrals] = useState<Referral[]>([]);
@@ -128,11 +129,12 @@ export default function MidwifePatientDetailPage() {
     doctorId: '',
   });
 
-  const [doctors, setDoctors] = useState<any[]>([]);
+  const [doctors, setDoctors] = useState<Array<{ id: string; firstName: string; lastName: string; specialization: string }>>([]);
 
   useEffect(() => {
     fetchPatientData();
     fetchDoctors();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [patientId]);
 
   const fetchPatientData = async () => {
@@ -186,7 +188,7 @@ export default function MidwifePatientDetailPage() {
         fundalHeight: '',
       });
       fetchPatientData();
-    } catch (error) {
+    } catch {
       toast.error('Failed to schedule visit');
     }
   };
@@ -201,7 +203,7 @@ export default function MidwifePatientDetailPage() {
       setNoteDialogOpen(false);
       setNoteForm({ note: '', category: 'GENERAL' });
       fetchPatientData();
-    } catch (error) {
+    } catch {
       toast.error('Failed to add progress note');
     }
   };
@@ -216,7 +218,7 @@ export default function MidwifePatientDetailPage() {
       setReferralDialogOpen(false);
       setReferralForm({ reason: '', priority: 'ROUTINE', notes: '', doctorId: '' });
       fetchPatientData();
-    } catch (error) {
+    } catch {
       toast.error('Failed to create referral');
     }
   };
@@ -235,6 +237,7 @@ export default function MidwifePatientDetailPage() {
         <Icons.AlertCircle className="w-16 h-16 text-[#757575] mb-4" />
         <h2 className="text-2xl font-bold text-[#212121]">Patient Not Found</h2>
         <Button onClick={() => router.back()} className="mt-4">
+          <Icons.ArrowLeft className="w-4 h-4 mr-2" />
           Go Back
         </Button>
       </div>
@@ -260,7 +263,7 @@ export default function MidwifePatientDetailPage() {
                 size="icon"
                 onClick={() => router.back()}
               >
-                <Icons.ChevronLeft className="w-5 h-5" />
+                <Icons.ArrowLeft className="w-5 h-5" />
               </Button>
               <div>
                 <h1 className="text-3xl font-bold text-[#212121]">
@@ -407,7 +410,7 @@ export default function MidwifePatientDetailPage() {
                         <SelectContent>
                           {doctors.map((doc) => (
                             <SelectItem key={doc.id} value={doc.id}>
-                              Dr. {doc.user.firstName} {doc.user.lastName} - {doc.specialization}
+                                Dr. {doc.firstName} {doc.lastName} - {doc.specialization}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -698,17 +701,17 @@ export default function MidwifePatientDetailPage() {
                   <div className="space-y-8">
                     <HealthTrendChart
                       metrics={healthMetrics.filter(m => m.type === 'WEIGHT')}
-                      metricType="WEIGHT"
+                      metricType={MetricType.WEIGHT}
                       title="Weight Progress"
                     />
                     <HealthTrendChart
                       metrics={healthMetrics.filter(m => m.type === 'BLOOD_PRESSURE_SYSTOLIC')}
-                      metricType="BLOOD_PRESSURE_SYSTOLIC"
+                      metricType={MetricType.BLOOD_PRESSURE_SYSTOLIC}
                       title="Blood Pressure Systolic"
                     />
                     <HealthTrendChart
                       metrics={healthMetrics.filter(m => m.type === 'FETAL_HEART_RATE')}
-                      metricType="FETAL_HEART_RATE"
+                      metricType={MetricType.FETAL_HEART_RATE}
                       title="Fetal Heart Rate"
                     />
                   </div>
@@ -807,32 +810,39 @@ export default function MidwifePatientDetailPage() {
                       {visit.notes && (
                         <p className="text-sm text-[#757575] mt-2">{visit.notes}</p>
                       )}
-                      {visit.observations && (
+                      {visit.observations && typeof visit.observations === 'object' && (
                         <div className="mt-4 grid grid-cols-2 gap-4 pt-4 border-t">
-                          {visit.observations.bloodPressure && (
-                            <div>
-                              <p className="text-sm text-[#757575]">Blood Pressure</p>
-                              <p className="font-medium">{visit.observations.bloodPressure}</p>
-                            </div>
-                          )}
-                          {visit.observations.weight && (
-                            <div>
-                              <p className="text-sm text-[#757575]">Weight</p>
-                              <p className="font-medium">{visit.observations.weight} kg</p>
-                            </div>
-                          )}
-                          {visit.observations.fetalHeartRate && (
-                            <div>
-                              <p className="text-sm text-[#757575]">Fetal Heart Rate</p>
-                              <p className="font-medium">{visit.observations.fetalHeartRate} bpm</p>
-                            </div>
-                          )}
-                          {visit.observations.fundalHeight && (
-                            <div>
-                              <p className="text-sm text-[#757575]">Fundal Height</p>
-                              <p className="font-medium">{visit.observations.fundalHeight} cm</p>
-                            </div>
-                          )}
+                          {(() => {
+                            const obs = visit.observations as Record<string, unknown>;
+                            return (
+                              <>
+                                {'bloodPressure' in obs && obs.bloodPressure && (
+                                  <div>
+                                    <p className="text-sm text-[#757575]">Blood Pressure</p>
+                                    <p className="font-medium">{String(obs.bloodPressure)}</p>
+                                  </div>
+                                )}
+                                {'weight' in obs && obs.weight && (
+                                  <div>
+                                    <p className="text-sm text-[#757575]">Weight</p>
+                                    <p className="font-medium">{String(obs.weight)} kg</p>
+                                  </div>
+                                )}
+                                {'fetalHeartRate' in obs && obs.fetalHeartRate && (
+                                  <div>
+                                    <p className="text-sm text-[#757575]">Fetal Heart Rate</p>
+                                    <p className="font-medium">{String(obs.fetalHeartRate)} bpm</p>
+                                  </div>
+                                )}
+                                {'fundalHeight' in obs && obs.fundalHeight && (
+                                  <div>
+                                    <p className="text-sm text-[#757575]">Fundal Height</p>
+                                    <p className="font-medium">{String(obs.fundalHeight)} cm</p>
+                                  </div>
+                                )}
+                              </>
+                            );
+                          })()}
                         </div>
                       )}
                     </CardContent>

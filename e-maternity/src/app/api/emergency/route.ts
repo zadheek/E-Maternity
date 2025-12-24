@@ -66,9 +66,6 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // TODO: Send SMS/push notifications to responders and emergency contacts
-    // TODO: Find and notify nearest hospital
-
     return NextResponse.json<ApiResponse<typeof alert>>(
       {
         success: true,

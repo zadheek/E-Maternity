@@ -29,7 +29,7 @@ interface Doctor {
 }
 
 export default function AdminDoctorsPage() {
-  const { user: _user } = useAuth('ADMIN');
+  useAuth('ADMIN');
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [doctors, setDoctors] = useState<Doctor[]>([]);
@@ -73,9 +73,10 @@ export default function AdminDoctorsPage() {
       setIsCreateDialogOpen(false);
       resetForm();
       fetchDoctors();
-    } catch (error: any) {
+    } catch (error) {
       console.error('Failed to create doctor:', error);
-      toast.error(error.response?.data?.error?.message || 'Failed to create doctor');
+      const axiosError = error as { response?: { data?: { error?: { message?: string } } } };
+      toast.error(axiosError.response?.data?.error?.message || 'Failed to create doctor');
     }
   };
 
@@ -89,9 +90,10 @@ export default function AdminDoctorsPage() {
       setSelectedDoctor(null);
       resetForm();
       fetchDoctors();
-    } catch (error: any) {
+    } catch (error) {
       console.error('Failed to update doctor:', error);
-      toast.error(error.response?.data?.error?.message || 'Failed to update doctor');
+      const axiosError = error as { response?: { data?: { error?: { message?: string } } } };
+      toast.error(axiosError.response?.data?.error?.message || 'Failed to update doctor');
     }
   };
 
@@ -104,9 +106,10 @@ export default function AdminDoctorsPage() {
       await axios.delete(`/api/admin/doctors/${doctorId}`);
       toast.success('Doctor deleted successfully');
       fetchDoctors();
-    } catch (error: any) {
+    } catch (error) {
       console.error('Failed to delete doctor:', error);
-      toast.error(error.response?.data?.error?.message || 'Failed to delete doctor');
+      const axiosError = error as { response?: { data?: { error?: { message?: string } } } };
+      toast.error(axiosError.response?.data?.error?.message || 'Failed to delete doctor');
     }
   };
 
@@ -163,7 +166,7 @@ export default function AdminDoctorsPage() {
           <div className="flex items-center justify-between">
             <div>
               <Button variant="ghost" onClick={() => router.back()} className="mb-2">
-                <Icons.Activity className="w-4 h-4 mr-2 rotate-180" />
+                <Icons.ArrowLeft className="w-4 h-4 mr-2" />
                 Back
               </Button>
               <h1 className="text-3xl font-bold text-[#212121]">Doctor Management</h1>

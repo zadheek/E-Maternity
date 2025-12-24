@@ -24,7 +24,7 @@ interface Mother {
 }
 
 export default function AdminMothersPage() {
-  const { user: _user } = useAuth('ADMIN');
+  useAuth('ADMIN');
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [mothers, setMothers] = useState<Mother[]>([]);
@@ -66,7 +66,7 @@ export default function AdminMothersPage() {
           <div className="flex items-center justify-between">
             <div>
               <Button variant="ghost" onClick={() => router.back()} className="mb-2">
-                <Icons.Activity className="w-4 h-4 mr-2 rotate-180" />
+                <Icons.ArrowLeft className="w-4 h-4 mr-2" />
                 Back
               </Button>
               <h1 className="text-3xl font-bold text-[#212121]">Mother Management</h1>

@@ -9,7 +9,9 @@ import type { User as PrismaUser } from '@prisma/client';
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma) as any,
   providers: [
+    // Email-based login (for all users)
     CredentialsProvider({
+      id: 'credentials',
       name: 'Credentials',
       credentials: {
         email: { label: 'Email', type: 'email' },
@@ -33,11 +35,6 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Invalid email or password');
         }
 
-        // Email verification disabled for now
-        // if (!user.isVerified) {
-        //   throw new Error('Please verify your email before logging in');
-        // }
-
         const isPasswordValid = await bcrypt.compare(
           credentials.password,
           user.password
@@ -45,6 +42,73 @@ export const authOptions: NextAuthOptions = {
 
         if (!isPasswordValid) {
           throw new Error('Invalid email or password');
+        }
+
+        if (!user.isVerified) {
+          throw new Error('Please verify your account first');
+        }
+
+        return {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          phoneNumber: user.phoneNumber,
+          language: user.language,
+          profileImage: user.profileImage,
+        };
+      },
+    }),
+    // NIC-based login (for mothers only)
+    CredentialsProvider({
+      id: 'nic-login',
+      name: 'NIC Login',
+      credentials: {
+        nic: { label: 'NIC', type: 'text' },
+        password: { label: 'Password', type: 'password' },
+      },
+      async authorize(credentials) {
+        if (!credentials?.nic || !credentials?.password) {
+          throw new Error('NIC and password required');
+        }
+
+        // Find mother profile by NIC
+        const motherProfile = await prisma.motherProfile.findUnique({
+          where: { nic: credentials.nic },
+          include: {
+            user: {
+              include: {
+                motherProfile: true,
+                doctorProfile: true,
+                midwifeProfile: true,
+              },
+            },
+          },
+        });
+
+        if (!motherProfile) {
+          throw new Error('Invalid NIC or password');
+        }
+
+        const user = motherProfile.user;
+
+        // Verify user role is MOTHER
+        if (user.role !== 'MOTHER') {
+          throw new Error('This login method is only for mothers');
+        }
+
+        const isPasswordValid = await bcrypt.compare(
+          credentials.password,
+          user.password
+        );
+
+        if (!isPasswordValid) {
+          throw new Error('Invalid NIC or password');
+        }
+
+        if (!user.isVerified) {
+          throw new Error('Please verify your account first');
         }
 
         return {

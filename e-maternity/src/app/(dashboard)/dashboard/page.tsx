@@ -23,9 +23,6 @@ export default function DashboardPage() {
         case 'MIDWIFE':
           router.replace('/dashboard/midwife');
           break;
-        case 'PHI':
-          router.replace('/dashboard/phi');
-          break;
         case 'ADMIN':
           router.replace('/dashboard/admin');
           break;

@@ -28,8 +28,7 @@ export async function PATCH(
     const { id } = await params;
     const body = await req.json();
 
-    // Update user
-    const updateData: any = {
+    const updateData: Record<string, string> = {
       email: body.email,
       firstName: body.firstName,
       lastName: body.lastName,

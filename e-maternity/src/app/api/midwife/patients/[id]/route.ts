@@ -5,9 +5,10 @@ import { prisma } from '@/lib/db/prisma';
 
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
 
     if (!session?.user || (session.user as any).role !== 'MIDWIFE') {
@@ -25,7 +26,7 @@ export async function GET(
     }
 
     const userId = (session.user as any).id;
-    const patientUserId = params.id;
+    const patientUserId = id;
 
     // Get midwife profile
     const midwifeProfile = await prisma.midwifeProfile.findUnique({

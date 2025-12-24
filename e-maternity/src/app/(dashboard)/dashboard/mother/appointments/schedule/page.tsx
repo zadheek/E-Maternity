@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { Textarea } from '@/components/ui/textarea';
+import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
 
 interface Provider {
   id: string;
@@ -49,7 +50,7 @@ export default function ScheduleAppointmentPage() {
       const response = await axios.get(`/api/providers?type=${formData.providerType}`);
       setProviders(response.data.data || []);
     } catch (error) {
-      console.error('Failed to fetch providers:', error);
+      
       toast.error('Failed to load healthcare providers');
     } finally {
       setLoading(false);
@@ -94,10 +95,11 @@ export default function ScheduleAppointmentPage() {
             <Icons.ChevronLeft className="w-4 h-4 mr-2" />
             Back
           </Button>
-          <div>
+          <div className="flex-1">
             <h1 className="text-2xl font-bold text-[#212121]">Schedule Appointment</h1>
             <p className="text-sm text-[#757575]">Book a visit with your healthcare provider</p>
           </div>
+          <LanguageSwitcher />
         </div>
       </header>
 

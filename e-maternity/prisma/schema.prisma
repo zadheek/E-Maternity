@@ -79,6 +79,26 @@ enum EmergencyStatus {
   RESOLVED
 }
 
+enum VitaminType {
+  FOLIC_ACID
+  IRON
+  CALCIUM
+  VITAMIN_D
+  MULTIVITAMIN
+  VITAMIN_B12
+  DHA_OMEGA3
+  OTHER
+}
+
+enum ImmunizationType {
+  TETANUS
+  RUBELLA
+  HEPATITIS_B
+  INFLUENZA
+  COVID19
+  OTHER
+}
+
 model User {
   id              String    @id @default(uuid())
   email           String    @unique
@@ -105,6 +125,8 @@ model User {
   emergencyAlerts EmergencyAlert[]
   prescriptions   Prescription[]   @relation("PrescribedBy")
   patientPrescriptions Prescription[] @relation("PatientPrescriptions")
+  vitaminRecords  VitaminRecord[]  @relation("PrescribedVitamins")
+  immunizationRecords ImmunizationRecord[] @relation("AdministeredImmunizations")
 
   @@index([email])
   @@index([role])
@@ -130,6 +152,16 @@ model MotherProfile {
   bloodType             BloodType
   riskLevel             RiskLevel @default(LOW)
   
+  // Weight tracking for risk assessment
+  currentWeight         Float?
+  prePregnancyWeight    Float?
+  height                Float?        // in cm for BMI calculation
+  bmi                   Float?
+  
+  // Previous complications
+  hadAbnormalBabies     Boolean   @default(false)
+  abnormalBabyDetails   Json?     // Array of previous complications
+  
   // Medical History
   previousPregnancies   Int       @default(0)
   previousCesareans     Int       @default(0)
@@ -152,6 +184,8 @@ model MotherProfile {
   homeVisits            HomeVisit[]
   progressNotes         ProgressNote[]
   referrals             Referral[]
+  vitaminRecords        VitaminRecord[]
+  immunizationRecords   ImmunizationRecord[]
   
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
@@ -467,4 +501,61 @@ model Referral {
   @@index([motherProfileId, status])
   @@index([doctorProfileId, status])
   @@index([midwifeProfileId, createdAt])
+}
+
+model VitaminRecord {
+  id                String         @id @default(uuid())
+  motherProfileId   String
+  motherProfile     MotherProfile  @relation(fields: [motherProfileId], references: [id], onDelete: Cascade)
+  
+  vitaminName       String
+  vitaminType       VitaminType
+  dosage            String         // e.g., "400mg", "1 tablet"
+  frequency         String         // e.g., "Daily", "Weekly", "Twice daily"
+  startDate         DateTime
+  endDate           DateTime?
+  
+  prescribedById    String
+  prescribedBy      User           @relation("PrescribedVitamins", fields: [prescribedById], references: [id])
+  
+  administeredDates Json?          // Array of dates when vitamin was given
+  nextDueDate       DateTime?
+  
+  notes             String?
+  isActive          Boolean        @default(true)
+  
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  
+  @@index([motherProfileId, isActive])
+  @@index([nextDueDate])
+  @@index([vitaminType])
+}
+
+model ImmunizationRecord {
+  id                String              @id @default(uuid())
+  motherProfileId   String
+  motherProfile     MotherProfile       @relation(fields: [motherProfileId], references: [id], onDelete: Cascade)
+  
+  vaccineName       String
+  immunizationType  ImmunizationType
+  doseNumber        Int                 // 1st dose, 2nd dose, booster
+  administeredDate  DateTime
+  
+  administeredById  String
+  administeredBy    User                @relation("AdministeredImmunizations", fields: [administeredById], references: [id])
+  
+  nextDueDate       DateTime?
+  batchNumber       String?
+  site              String?             // Injection site (e.g., "Left arm", "Right thigh")
+  
+  sideEffects       String?
+  notes             String?
+  
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  @@index([motherProfileId, immunizationType])
+  @@index([nextDueDate])
+  @@index([administeredDate])
 }

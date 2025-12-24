@@ -44,7 +44,7 @@ export default function LoginPage() {
       toast.success('Login successful!');
       router.push('/dashboard');
       router.refresh();
-    } catch (error) {
+    } catch {
       toast.error('An error occurred during login');
     } finally {
       setIsLoading(false);
@@ -152,7 +152,7 @@ export default function LoginPage() {
         </CardContent>
         <CardFooter className="flex flex-col space-y-2">
           <div className="text-sm text-center text-[#757575]">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link href="/register" className="text-[#2196F3] hover:underline font-medium">
               Register as Mother
             </Link>

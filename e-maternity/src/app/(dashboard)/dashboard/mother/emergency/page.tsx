@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from '@/hooks/useAuth';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Icons } from '@/components/icons';
@@ -12,6 +12,8 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
+import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
+import { useTranslations } from 'next-intl';
 
 interface EmergencyAlert {
   id: string;
@@ -35,11 +37,11 @@ interface Hospital {
 }
 
 export default function EmergencyPage() {
-  const { user } = useAuth('MOTHER');
+  useAuth('MOTHER');
   const router = useRouter();
+  const t = useTranslations();
   const [alerts, setAlerts] = useState<EmergencyAlert[]>([]);
   const [nearbyHospitals, setNearbyHospitals] = useState<Hospital[]>([]);
-  const [loading, setLoading] = useState(true);
   const [sendingAlert, setSendingAlert] = useState(false);
   const [locationStatus, setLocationStatus] = useState<'idle' | 'getting' | 'success' | 'error'>('idle');
   const [currentLocation, setCurrentLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -49,12 +51,7 @@ export default function EmergencyPage() {
     description: '',
   });
 
-  useEffect(() => {
-    fetchAlerts();
-    getCurrentLocation();
-  }, []);
-
-  const getCurrentLocation = () => {
+  const getCurrentLocation = useCallback(() => {
     setLocationStatus('getting');
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -67,26 +64,28 @@ export default function EmergencyPage() {
           setLocationStatus('success');
           fetchNearbyHospitals(location.lat, location.lng);
         },
-        (error) => {
-          console.error('Location error:', error);
+        () => {
           setLocationStatus('error');
           toast.error('Could not get your location. Please enable location services.');
         }
       );
     } else {
       setLocationStatus('error');
-      toast.error('Geolocation is not supported by your browser.');
+      toast.error(t('emergencyPage.locationError'));
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchAlerts();
+    getCurrentLocation();
+  }, [getCurrentLocation]);
 
   const fetchAlerts = async () => {
     try {
       const response = await axios.get('/api/emergency');
       setAlerts(response.data.data || []);
-    } catch (error) {
-      console.error('Failed to fetch alerts:', error);
-    } finally {
-      setLoading(false);
+    } catch {
+      // Error handled silently
     }
   };
 
@@ -94,8 +93,8 @@ export default function EmergencyPage() {
     try {
       const response = await axios.get(`/api/hospitals/nearby?lat=${lat}&lng=${lng}`);
       setNearbyHospitals(response.data.data || []);
-    } catch (error) {
-      console.error('Failed to fetch hospitals:', error);
+    } catch {
+      // Error handled silently
     }
   };
 
@@ -121,15 +120,16 @@ export default function EmergencyPage() {
         longitude: currentLocation.lng,
       });
 
-      toast.success('Emergency alert sent! Help is on the way.', {
+      toast.success(t('emergencyPage.alertSent'), {
         description: 'Your emergency contacts and assigned healthcare providers have been notified.',
         duration: 5000,
       });
 
       setEmergencyForm({ type: 'SEVERE_BLEEDING', description: '' });
       fetchAlerts();
-    } catch (error: any) {
-      toast.error(error.response?.data?.error?.message || 'Failed to send emergency alert');
+    } catch (error: unknown) {
+      const axiosError = error as { response?: { data?: { error?: { message?: string } } } };
+      toast.error(axiosError.response?.data?.error?.message || 'Failed to send emergency alert');
     } finally {
       setSendingAlert(false);
     }
@@ -157,17 +157,18 @@ export default function EmergencyPage() {
               className="text-white hover:bg-red-700"
             >
               <Icons.ChevronLeft className="w-4 h-4 mr-2" />
-              Back
+              {t('common.back')}
             </Button>
             <div>
               <h1 className="text-2xl font-bold flex items-center gap-2">
                 <Icons.Ambulance className="w-6 h-6" />
-                Emergency SOS
+                {t('emergencyPage.title')}
               </h1>
-              <p className="text-sm opacity-90">Quick access to emergency services</p>
+              <p className="text-sm opacity-90">{t('emergencyPage.subtitle')}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <LanguageSwitcher />
             {locationStatus === 'success' && (
               <Badge className="bg-green-500">
                 <Icons.MapPin className="w-3 h-3 mr-1" />
@@ -191,10 +192,10 @@ export default function EmergencyPage() {
             <CardHeader className="bg-red-50">
               <CardTitle className="text-red-600 flex items-center gap-2">
                 <Icons.AlertCircle className="w-5 h-5" />
-                Send Emergency Alert
+                {t('emergencyPage.sendSOS')}
               </CardTitle>
               <CardDescription>
-                Use this only for urgent medical emergencies. Your location and details will be shared with emergency contacts and healthcare providers.
+                {t('emergencyPage.subtitle')}
               </CardDescription>
             </CardHeader>
             <CardContent className="pt-6">

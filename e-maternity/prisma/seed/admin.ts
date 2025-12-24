@@ -17,7 +17,7 @@ async function seedAdmin() {
     }
 
     const adminPassword = await bcrypt.hash('admin123', 10);
-    const admin = await prisma.user.create({
+    await prisma.user.create({
       data: {
         email: 'admin@ematernity.lk',
         password: adminPassword,

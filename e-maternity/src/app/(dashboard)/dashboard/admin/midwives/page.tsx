@@ -27,7 +27,7 @@ interface Midwife {
 }
 
 export default function AdminMidwivesPage() {
-  const { user: _user } = useAuth('ADMIN');
+  useAuth('ADMIN');
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [midwives, setMidwives] = useState<Midwife[]>([]);
@@ -68,8 +68,9 @@ export default function AdminMidwivesPage() {
       setIsCreateDialogOpen(false);
       resetForm();
       fetchMidwives();
-    } catch (error: any) {
-      toast.error(error.response?.data?.error?.message || 'Failed to create midwife');
+    } catch (error) {
+      const axiosError = error as { response?: { data?: { error?: { message?: string } } } };
+      toast.error(axiosError.response?.data?.error?.message || 'Failed to create midwife');
     }
   };
 
@@ -83,8 +84,9 @@ export default function AdminMidwivesPage() {
       setSelectedMidwife(null);
       resetForm();
       fetchMidwives();
-    } catch (error: any) {
-      toast.error(error.response?.data?.error?.message || 'Failed to update midwife');
+    } catch (error) {
+      const axiosError = error as { response?: { data?: { error?: { message?: string } } } };
+      toast.error(axiosError.response?.data?.error?.message || 'Failed to update midwife');
     }
   };
 
@@ -95,8 +97,9 @@ export default function AdminMidwivesPage() {
       await axios.delete(`/api/admin/midwives/${midwifeId}`);
       toast.success('Midwife deleted successfully');
       fetchMidwives();
-    } catch (error: any) {
-      toast.error(error.response?.data?.error?.message || 'Failed to delete midwife');
+    } catch (error) {
+      const axiosError = error as { response?: { data?: { error?: { message?: string } } } };
+      toast.error(axiosError.response?.data?.error?.message || 'Failed to delete midwife');
     }
   };
 
@@ -146,7 +149,7 @@ export default function AdminMidwivesPage() {
           <div className="flex items-center justify-between">
             <div>
               <Button variant="ghost" onClick={() => router.back()} className="mb-2">
-                <Icons.Activity className="w-4 h-4 mr-2 rotate-180" />
+                <Icons.ArrowLeft className="w-4 h-4 mr-2" />
                 Back
               </Button>
               <h1 className="text-3xl font-bold text-[#212121]">Midwife Management</h1>

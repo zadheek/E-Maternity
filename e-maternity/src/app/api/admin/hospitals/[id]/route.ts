@@ -5,9 +5,10 @@ import { prisma } from '@/lib/db/prisma';
 
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
 
     if (!session?.user || session.user.role !== 'ADMIN') {
@@ -18,7 +19,7 @@ export async function GET(
     }
 
     const hospital = await prisma.hospital.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!hospital) {
@@ -44,9 +45,10 @@ export async function GET(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
 
     if (!session?.user || session.user.role !== 'ADMIN') {
@@ -58,7 +60,7 @@ export async function PATCH(
 
     const body = await req.json();
     const hospital = await prisma.hospital.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         ...body,
         latitude: body.latitude ? parseFloat(body.latitude) : undefined,
@@ -83,9 +85,10 @@ export async function PATCH(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await getServerSession(authOptions);
 
     if (!session?.user || session.user.role !== 'ADMIN') {
@@ -96,7 +99,7 @@ export async function DELETE(
     }
 
     await prisma.hospital.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return NextResponse.json({

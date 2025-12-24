@@ -19,7 +19,7 @@ export async function GET(req: Request) {
     const district = searchParams.get('district');
     const type = searchParams.get('type');
 
-    const where: any = {};
+    const where: Record<string, unknown> = {};
 
     if (search) {
       where.OR = [

@@ -55,9 +55,10 @@ export default function RegisterPage() {
         toast.success('Registration successful! You can now log in.');
         router.push('/login');
       }
-    } catch (error: any) {
-      const errorCode = error.response?.data?.error?.code;
-      const message = error.response?.data?.error?.message || 'Registration failed';
+    } catch (error) {
+      const axiosError = error as { response?: { data?: { error?: { code?: string; message?: string } } } };
+      const errorCode = axiosError.response?.data?.error?.code;
+      const message = axiosError.response?.data?.error?.message || 'Registration failed';
       
       if (errorCode === 'USER_EXISTS') {
         toast.error(message, {
@@ -86,6 +87,7 @@ export default function RegisterPage() {
       ? ['email', 'password', 'confirmPassword', 'firstName', 'lastName', 'phoneNumber', 'language']
       : ['dateOfBirth', 'nic', 'street', 'city', 'district', 'postalCode'];
     
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const isValid = await form.trigger(fields as any);
     if (isValid) setStep(step + 1);
   };

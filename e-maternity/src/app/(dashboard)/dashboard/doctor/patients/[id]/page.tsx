@@ -3,7 +3,7 @@
 import { useAuth } from '@/hooks/useAuth';
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -38,7 +38,7 @@ interface PatientData {
   };
   healthMetrics: {
     id: string;
-    type: string;
+    type: MetricType;
     value: number;
     unit: string;
     recordedAt: string;
@@ -66,7 +66,7 @@ interface PatientData {
 }
 
 export default function PatientDetailPage() {
-  const { user: _user } = useAuth('DOCTOR');
+  useAuth('DOCTOR');
   const router = useRouter();
   const params = useParams();
   const patientId = params.id as string;
@@ -79,6 +79,7 @@ export default function PatientDetailPage() {
     if (patientId) {
       fetchPatientData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [patientId]);
 
   const fetchPatientData = async () => {
@@ -106,7 +107,10 @@ export default function PatientDetailPage() {
       <div className="flex flex-col items-center justify-center min-h-screen">
         <Icons.AlertCircle className="w-12 h-12 text-red-600 mb-4" />
         <h2 className="text-2xl font-bold mb-2">Patient Not Found</h2>
-        <Button onClick={() => router.back()}>Go Back</Button>
+        <Button onClick={() => router.back()}>
+          <Icons.ArrowLeft className="w-4 h-4 mr-2" />
+          Go Back
+        </Button>
       </div>
     );
   }
@@ -127,7 +131,7 @@ export default function PatientDetailPage() {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <Button variant="ghost" onClick={() => router.back()} className="mb-2">
-            <Icons.ChevronLeft className="mr-1 h-4 w-4" />
+            <Icons.ArrowLeft className="mr-1 h-4 w-4" />
             Back to Patients
           </Button>
           <h1 className="text-3xl font-bold">
@@ -407,6 +411,7 @@ export default function PatientDetailPage() {
             <CardContent>
               {patient.prescriptions && patient.prescriptions.length > 0 ? (
                 <div className="space-y-4">
+                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                   {patient.prescriptions.map((prescription: any) => (
                     <div key={prescription.id} className="border rounded-lg p-4">
                       <div className="flex items-start justify-between mb-3">
@@ -428,6 +433,7 @@ export default function PatientDetailPage() {
                       </div>
                       <p className="text-sm text-[#757575] mb-2">{prescription.instructions}</p>
                       <div className="space-y-2">
+                        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                         {Array.isArray(prescription.medications) && prescription.medications.map((med: any, index: number) => (
                           <div key={index} className="bg-[#FAFAFA] p-2 rounded text-sm">
                             <p className="font-medium">{med.name} - {med.dosage}</p>
@@ -454,6 +460,7 @@ export default function PatientDetailPage() {
             <CardContent>
               {patient.appointments && patient.appointments.length > 0 ? (
                 <div className="space-y-3">
+                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                   {patient.appointments.map((apt: any) => (
                     <div key={apt.id} className="flex items-center justify-between p-3 border rounded-lg">
                       <div>

@@ -80,8 +80,9 @@ async function createNewProviders() {
     console.log(`   Password: ${midwifePassword}`);
     console.log('\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 
-  } catch (error: any) {
-    if (error.code === 'P2002') {
+  } catch (error) {
+    const prismaError = error as { code?: string };
+    if (prismaError.code === 'P2002') {
       console.log('⚠️  Accounts already exist. Skipping creation.');
     } else {
       console.error('❌ Error creating providers:', error);

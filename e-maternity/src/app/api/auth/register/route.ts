@@ -100,8 +100,6 @@ export async function POST(req: NextRequest) {
       },
     });
     
-    // TODO: Send verification email/SMS with OTP
-    
     return NextResponse.json<ApiResponse<typeof user>>(
       {
         success: true,

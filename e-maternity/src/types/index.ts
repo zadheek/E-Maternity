@@ -61,20 +61,41 @@ export enum EmergencyStatus {
   RESOLVED = 'RESOLVED'
 }
 
+export enum VitaminType {
+  FOLIC_ACID = 'FOLIC_ACID',
+  IRON = 'IRON',
+  CALCIUM = 'CALCIUM',
+  VITAMIN_D = 'VITAMIN_D',
+  MULTIVITAMIN = 'MULTIVITAMIN',
+  VITAMIN_B12 = 'VITAMIN_B12',
+  DHA_OMEGA3 = 'DHA_OMEGA3',
+  OTHER = 'OTHER'
+}
+
+export enum ImmunizationType {
+  TETANUS = 'TETANUS',
+  RUBELLA = 'RUBELLA',
+  HEPATITIS_B = 'HEPATITIS_B',
+  INFLUENZA = 'INFLUENZA',
+  COVID19 = 'COVID19',
+  OTHER = 'OTHER'
+}
+
 // Import Prisma types
 import type {
   User,
   MotherProfile,
   DoctorProfile,
   MidwifeProfile,
-  PHIProfile,
   HealthMetric,
   Appointment,
   EmergencyAlert,
   EmergencyContact,
   Hospital,
   Prescription,
-  MedicalDocument
+  MedicalDocument,
+  VitaminRecord,
+  ImmunizationRecord
 } from '@prisma/client';
 
 // Extended types with relations
@@ -98,6 +119,38 @@ export type PrescriptionWithRelations = Prescription & {
   mother: User;
   prescribedBy: User;
 };
+
+export type VitaminRecordWithRelations = VitaminRecord & {
+  motherProfile: MotherProfile;
+  prescribedBy: User;
+};
+
+export type ImmunizationRecordWithRelations = ImmunizationRecord & {
+  motherProfile: MotherProfile;
+  administeredBy: User;
+};
+
+// Abnormal baby record type
+export interface AbnormalBabyRecord {
+  id: string;
+  year: number;
+  condition: string;
+  description: string;
+  outcome: string; // 'stillbirth', 'neonatal_death', 'survived_with_condition'
+}
+
+// Risk assessment factors
+export interface RiskAssessmentFactors {
+  isUnderweight: boolean;
+  hasChronicConditions: boolean;
+  hadAbnormalBabies: boolean;
+  age: number;
+  previousCesareans: number;
+  previousMiscarriages: number;
+  bloodPressure?: { systolic: number; diastolic: number };
+  hemoglobin?: number;
+  bloodGlucose?: number;
+}
 
 // API Response types
 export interface ApiResponse<T> {
@@ -129,12 +182,13 @@ export type {
   MotherProfile,
   DoctorProfile,
   MidwifeProfile,
-  PHIProfile,
   HealthMetric,
   Appointment,
   EmergencyAlert,
   EmergencyContact,
   Hospital,
   Prescription,
-  MedicalDocument
+  MedicalDocument,
+  VitaminRecord,
+  ImmunizationRecord
 };
